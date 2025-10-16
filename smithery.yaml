@@ -1,3 +1,0 @@
-# Smithery configuration file: https://smithery.ai/docs/build/project-config
-# This MCP server runs as an HTTP server using SSE transport
-# The Docker container will handle the HTTP server automatically
