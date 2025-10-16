@@ -137,7 +137,8 @@ Note: Include "use bgg-rules" in your question to ensure the AI searches BGG for
 
 ## Installation
 
-> [!WARNING] > _The previous Smithery deployment was removed unexpectedly - this has been restored but may cause issues with old connections. If you connected to Smithery before 16/10/25, refresh your setup using the updated link and connector URL below._
+> [!WARNING]
+> The previous Smithery deployment was removed unexpectedly - this has been restored but may cause issues with old connections. If you connected to Smithery before 16/10/25, refresh your setup using the updated link and connector URL below.
 
 You have multiple options for installing BGG MCP:
 
