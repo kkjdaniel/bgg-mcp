@@ -1,0 +1,22 @@
+# Smithery deployment configuration for BGG MCP Server
+# See: https://smithery.ai/docs/build/project-config
+
+runtime: "container"
+
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
+
+startCommand:
+  type: "http"
+
+# Optional configuration schema for user settings
+configSchema:
+  type: "object"
+  properties:
+    BGG_USERNAME:
+      type: "string"
+      title: "BoardGameGeek Username"
+      description: "Your BGG username for personalized features (collection, trade finder, etc.)"
+      default: ""
+  additionalProperties: false
