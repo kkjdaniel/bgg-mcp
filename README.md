@@ -150,7 +150,7 @@ Get started in under a minute with [Smithery](https://smithery.ai/server/@kkjdan
 2. **Follow the quick setup** - Smithery handles all configuration automatically
 3. **Start using BGG tools** immediately - no manual setup required
 
-#### Or via Connectors for Claude users (Preferred)
+#### Or via Connectors for Claude users
 
 Add BGG MCP as a custom connector:
 
@@ -222,7 +222,6 @@ You can optionally set the `BGG_USERNAME` environment variable to enable "me" an
 
 ```json
 "bgg": {
-    ...
     "env": {
         "BGG_USERNAME": "your_bgg_username"
     }
