@@ -150,8 +150,6 @@ Get started in under a minute with [Smithery](https://smithery.ai/server/@kkjdan
 2. **Follow the quick setup** - Smithery handles all configuration automatically
 3. **Start using BGG tools** immediately - no manual setup required
 
-If you connected to Smithery before 16/10/25, remove the old BGG MCP deployment and reconnect using the link above.
-
 #### Or via Connectors for Claude users (Preferred)
 
 Add BGG MCP as a custom connector:
