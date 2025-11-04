@@ -138,6 +138,32 @@ func runHTTPServer(port string) {
 
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("/.well-known/mcp-config", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		configSchema := `{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "BGG_API_KEY": {
+      "type": "string",
+      "title": "BGG API Key (Recommended)",
+      "description": "API key from BoardGameGeek for authentication. Get one at https://boardgamegeek.com/applications"
+    },
+    "BGG_COOKIE": {
+      "type": "string",
+      "title": "BGG Cookie (Alternative)",
+      "description": "Cookie string for BGG authentication. Only needed if not using API key"
+    },
+    "BGG_USERNAME": {
+      "type": "string",
+      "title": "BGG Username",
+      "description": "Your BGG username for personalized features"
+    }
+  }
+}`
+		w.Write([]byte(configSchema))
+	})
+
 	mux.HandleFunc("/mcp", func(w http.ResponseWriter, r *http.Request) {
 		apiKey, cookie, username := parseSessionConfig(r)
 
