@@ -9,12 +9,19 @@
   "version": "1.3.2",
   "packages": [
     {
-      "registryType": "oci",
+      "registry_type": "oci",
       "identifier": "docker.io/kdaniel/bgg-mcp",
       "version": "1.3.2",
       "transport": {
         "type": "stdio"
-      }
+      },
+      "environment_variables": [
+        {
+          "name": "BGG_USERNAME",
+          "description": "Your BoardGameGeek username for references such as ME or MY in prompts",
+          "format": "string"
+        }
+      ]
     }
   ]
 }
