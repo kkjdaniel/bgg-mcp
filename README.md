@@ -1,3 +1,4 @@
+```markdown
 <p align="center">
   <img src="images/bgg-mcp-logo.png" width="200" alt="BGG MCP Logo">
 </p>
@@ -12,6 +13,7 @@
   <a href="https://go.dev/"><img src="https://img.shields.io/github/go-mod/go-version/kkjdaniel/bgg-mcp" alt="Go Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/kkjdaniel/bgg-mcp" alt="License"></a>
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Protocol-blue" alt="MCP Protocol"></a>
+  <a href="https://smithery.ai/server/@kkjdaniel/bgg-mcp"><img alt="Smithery Badge" src="https://smithery.ai/badge/@kkjdaniel/bgg-mcp"></a>
 </p>
 
 BGG MCP provides access to the BoardGameGeek API through the [Model Context Protocol](https://www.anthropic.com/news/model-context-protocol), enabling retrieval and filtering of board game data, user collections, and profiles. The server is implemented in Go, using the [GoGeek](https://github.com/kkjdaniel/gogeek) library, which helps ensure robust API interactions.
@@ -292,3 +294,4 @@ This enables:
 - **AI assistance**: The AI can automatically use your username for comparisons and analysis
 
 **Note**: When you use self-references (me, my, I) without setting BGG_USERNAME, you'll get a clear error message.
+```
