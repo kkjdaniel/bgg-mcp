@@ -8,7 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/kkjdaniel/gogeek/thing"
+	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v2/thing"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -21,7 +22,7 @@ type RecommendGameItem struct {
 	BGGID int `json:"bgg_id"`
 }
 
-func RecommenderTool() (mcp.Tool, server.ToolHandlerFunc) {
+func RecommenderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-recommender",
 		mcp.WithDescription("Get game recommendations based on a specific game using either the BoardGameGeek (BGG) ID or name directly. ID is preferred for faster responses."),
 		mcp.WithString("name",
@@ -42,7 +43,7 @@ func RecommenderTool() (mcp.Tool, server.ToolHandlerFunc) {
 		var err error
 
 		if nameVal, ok := arguments["name"].(string); ok && nameVal != "" {
-			gameDetails, err := searchAndSortGames(nameVal, "boardgame", 1)
+			gameDetails, err := searchAndSortGames(client, nameVal, "boardgame", 1)
 			if err != nil {
 				return mcp.NewToolResultText(fmt.Sprintf("Error finding game by name: %v", err)), nil
 			}
@@ -98,7 +99,7 @@ func RecommenderTool() (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultText("No recommendations found"), nil
 		}
 
-		gameDetails, err := thing.Query(recommendedIDs)
+		gameDetails, err := thing.Query(client, recommendedIDs)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error fetching game details: %v", err)), nil
 		}

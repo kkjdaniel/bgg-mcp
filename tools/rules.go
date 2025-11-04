@@ -7,8 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kkjdaniel/gogeek/forum"
-	"github.com/kkjdaniel/gogeek/forumlist"
+	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v2/forum"
+	"github.com/kkjdaniel/gogeek/v2/forumlist"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -22,7 +23,7 @@ type RulesForumResult struct {
 	Threads      []forum.Thread `json:"threads"`
 }
 
-func RulesTool() (mcp.Tool, server.ToolHandlerFunc) {
+func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-rules",
 		mcp.WithDescription("Use this tool when users ask rules questions about board games (e.g., 'How does X work?', 'Can I do Y?', 'What happens when Z?'). Searches BoardGameGeek rules forums to find answers and clarifications from the community."),
 		mcp.WithString("name",
@@ -52,7 +53,7 @@ func RulesTool() (mcp.Tool, server.ToolHandlerFunc) {
 			}
 		} else if nameVal, ok := arguments["name"]; ok && nameVal != nil {
 			gameName = nameVal.(string)
-			bestMatch, err := findBestGameMatch(gameName)
+			bestMatch, err := findBestGameMatch(client, gameName)
 			if err != nil {
 				return mcp.NewToolResultText(fmt.Sprintf("Failed to find game: %v", err)), nil
 			}
@@ -62,7 +63,7 @@ func RulesTool() (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultText("Either 'name' or 'id' parameter is required"), nil
 		}
 
-		forums, err := forumlist.Query(gameID, forumlist.Thing)
+		forums, err := forumlist.Query(client, gameID, forumlist.Thing)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Failed to get forum list: %v", err)), nil
 		}
@@ -97,9 +98,9 @@ func RulesTool() (mcp.Tool, server.ToolHandlerFunc) {
 			var err error
 
 			if page == 1 {
-				rulesForumData, err = forum.Query(rulesForumID)
+				rulesForumData, err = forum.Query(client, rulesForumID)
 			} else {
-				rulesForumData, err = forum.Query(rulesForumID, forum.WithPage(page))
+				rulesForumData, err = forum.Query(client, rulesForumID, forum.WithPage(page))
 			}
 
 			if err != nil {

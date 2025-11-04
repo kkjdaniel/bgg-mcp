@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,10 +13,45 @@ import (
 
 	"github.com/kkjdanie/bgg-mcp/prompts"
 	"github.com/kkjdanie/bgg-mcp/tools"
+	"github.com/kkjdaniel/gogeek/v2"
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func createMCPServer() *server.MCPServer {
+func initializeGoGeekClient() *gogeek.Client {
+	return createClientFromEnv()
+}
+
+func createClientFromEnv() *gogeek.Client {
+	if apiKey := os.Getenv("BGG_API_KEY"); apiKey != "" {
+		return gogeek.NewClient(gogeek.WithAPIKey(apiKey))
+	}
+
+	if cookie := os.Getenv("BGG_COOKIE"); cookie != "" {
+		return gogeek.NewClient(gogeek.WithCookie(cookie))
+	}
+
+	return gogeek.NewClient()
+}
+
+func parseSessionConfig(r *http.Request) (apiKey, cookie, username string) {
+	query := r.URL.Query()
+	apiKey = query.Get("BGG_API_KEY")
+	cookie = query.Get("BGG_COOKIE")
+	username = query.Get("BGG_USERNAME")
+	return
+}
+
+func createClientFromSessionConfig(apiKey, cookie string) *gogeek.Client {
+	if apiKey != "" {
+		return gogeek.NewClient(gogeek.WithAPIKey(apiKey))
+	}
+	if cookie != "" {
+		return gogeek.NewClient(gogeek.WithCookie(cookie))
+	}
+	return gogeek.NewClient()
+}
+
+func createMCPServer(client *gogeek.Client) *server.MCPServer {
 	s := server.NewMCPServer(
 		"BGG MCP",
 		"1.4.0",
@@ -25,34 +61,34 @@ func createMCPServer() *server.MCPServer {
 		server.WithRecovery(),
 	)
 
-	detailsTool, detailsHandler := tools.DetailsTool()
+	detailsTool, detailsHandler := tools.DetailsTool(client)
 	s.AddTool(detailsTool, detailsHandler)
 
-	collectionTool, collectionHandler := tools.CollectionTool()
+	collectionTool, collectionHandler := tools.CollectionTool(client)
 	s.AddTool(collectionTool, collectionHandler)
 
-	hotnessTool, hotnessHandler := tools.HotnessTool()
+	hotnessTool, hotnessHandler := tools.HotnessTool(client)
 	s.AddTool(hotnessTool, hotnessHandler)
 
-	userTool, userHandler := tools.UserTool()
+	userTool, userHandler := tools.UserTool(client)
 	s.AddTool(userTool, userHandler)
 
-	searchTool, searchHandler := tools.SearchTool()
+	searchTool, searchHandler := tools.SearchTool(client)
 	s.AddTool(searchTool, searchHandler)
 
 	priceTool, priceHandler := tools.PriceTool()
 	s.AddTool(priceTool, priceHandler)
 
-	tradeFinderTool, tradeFinderHandler := tools.TradeFinderTool()
+	tradeFinderTool, tradeFinderHandler := tools.TradeFinderTool(client)
 	s.AddTool(tradeFinderTool, tradeFinderHandler)
 
-	recommenderTool, recommenderHandler := tools.RecommenderTool()
+	recommenderTool, recommenderHandler := tools.RecommenderTool(client)
 	s.AddTool(recommenderTool, recommenderHandler)
 
-	rulesTool, rulesHandler := tools.RulesTool()
+	rulesTool, rulesHandler := tools.RulesTool(client)
 	s.AddTool(rulesTool, rulesHandler)
 
-	threadDetailsTool, threadDetailsHandler := tools.ThreadDetailsTool()
+	threadDetailsTool, threadDetailsHandler := tools.ThreadDetailsTool(client)
 	s.AddTool(threadDetailsTool, threadDetailsHandler)
 
 	prompts.RegisterPrompts(s)
@@ -76,12 +112,12 @@ func main() {
 		port = envPort
 	}
 
-	mcpServer := createMCPServer()
-
 	switch mode {
 	case "http":
-		runHTTPServer(mcpServer, port)
+		runHTTPServer(port)
 	case "stdio":
+		client := initializeGoGeekClient()
+		mcpServer := createMCPServer(client)
 		runStdioServer(mcpServer)
 	default:
 		log.Fatalf("Invalid mode: %s. Use 'stdio' or 'http'", mode)
@@ -94,17 +130,46 @@ func runStdioServer(mcpServer *server.MCPServer) {
 	}
 }
 
-func runHTTPServer(mcpServer *server.MCPServer, port string) {
+func runHTTPServer(port string) {
 	baseURL := os.Getenv("MCP_BASE_URL")
 	if baseURL == "" {
 		baseURL = fmt.Sprintf("http://localhost:%s", port)
 	}
-	
-	httpServer := server.NewStreamableHTTPServer(mcpServer,
-		server.WithEndpointPath("/mcp"),
-		server.WithStateLess(true),
-		server.WithHeartbeatInterval(30*time.Second),
-	)
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/mcp", func(w http.ResponseWriter, r *http.Request) {
+		apiKey, cookie, username := parseSessionConfig(r)
+
+		var sessionClient *gogeek.Client
+		if apiKey != "" || cookie != "" {
+			sessionClient = createClientFromSessionConfig(apiKey, cookie)
+			log.Printf("Using session configuration for request")
+		} else {
+			sessionClient = createClientFromEnv()
+		}
+
+		originalUsername := os.Getenv("BGG_USERNAME")
+		if username != "" {
+			os.Setenv("BGG_USERNAME", username)
+			defer os.Setenv("BGG_USERNAME", originalUsername)
+		}
+
+		sessionMCPServer := createMCPServer(sessionClient)
+
+		httpServer := server.NewStreamableHTTPServer(sessionMCPServer,
+			server.WithEndpointPath("/mcp"),
+			server.WithStateLess(true),
+			server.WithHeartbeatInterval(30*time.Second),
+		)
+
+		httpServer.ServeHTTP(w, r)
+	})
+
+	srv := &http.Server{
+		Addr:    ":" + port,
+		Handler: mux,
+	}
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
@@ -112,19 +177,20 @@ func runHTTPServer(mcpServer *server.MCPServer, port string) {
 	go func() {
 		<-sigChan
 		log.Println("Shutting down HTTP server...")
-		
+
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer shutdownCancel()
-		
-		if err := httpServer.Shutdown(shutdownCtx); err != nil {
+
+		if err := srv.Shutdown(shutdownCtx); err != nil {
 			log.Printf("Error during shutdown: %v", err)
 		}
 	}()
 
 	log.Printf("Starting HTTP server on port %s", port)
 	log.Printf("HTTP endpoint: %s/mcp", baseURL)
-	
-	if err := httpServer.Start(":" + port); err != nil {
+	log.Printf("Supports Smithery session configuration via query parameters")
+
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("HTTP server error: %v", err)
 	}
 }

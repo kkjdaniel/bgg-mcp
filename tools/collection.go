@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kkjdaniel/gogeek/collection"
+	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v2/collection"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func CollectionTool() (mcp.Tool, server.ToolHandlerFunc) {
+func CollectionTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-collection",
 		mcp.WithDescription("Find the details about a specific users board game collection on BoardGameGeek (BGG)"),
 		mcp.WithString("username",
@@ -87,7 +88,7 @@ func CollectionTool() (mcp.Tool, server.ToolHandlerFunc) {
 
 		options := buildCollectionOptions(arguments)
 
-		result, err := collection.Query(username, options...)
+		result, err := collection.Query(client, username, options...)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error fetching collection: %v", err)), nil
 		}

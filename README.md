@@ -214,16 +214,64 @@ In the `settings.json` (VS Code / Cursor) or `claude_desktop_config.json` add th
 
 More details for configuring Claude can be [found here](https://modelcontextprotocol.io/quickstart/user).
 
-## Optional Configuration
+## Configuration
 
-### Username Configuration (Optional)
+### Authentication
+
+BGG MCP v2.0+ uses the GoGeek v2.0 library which requires authentication for reliable access to BoardGameGeek's API.
+
+You can configure authentication using **either** `BGG_API_KEY` (recommended) or `BGG_COOKIE`:
+
+#### For Smithery Users
+
+When connecting via [Smithery](https://smithery.ai/server/@kkjdaniel/bgg-mcp), you can configure authentication directly in the connection UI:
+
+1. Click **Configure** button on the BGG MCP server page
+2. Fill in the configuration form:
+   - **BGG API Key** (recommended) - Get one at [boardgamegeek.com/applications](https://boardgamegeek.com/applications)
+   - **BGG Cookie** (alternative) - Only if you're not using an API key
+   - **BGG Username** - Your username for personalized features
+3. Click **Save Configuration**, then connect with this profile
+
+Your settings are stored securely and applied automatically when you use BGG MCP tools.
+
+#### For Manual Setup
+
+##### Option 1: API Key (Recommended)
+
+Get an API key from [BoardGameGeek's API application form](https://boardgamegeek.com/applications) and add it to your configuration:
+
+```json
+"bgg": {
+    "env": {
+        "BGG_API_KEY": "your_api_key_here"
+    }
+}
+```
+
+##### Option 2: Cookie Authentication
+
+Alternatively, you can use cookie-based authentication:
+
+```json
+"bgg": {
+    "env": {
+        "BGG_COOKIE": "bggusername=user; bggpassword=pass; SessionID=xyz"
+    }
+}
+```
+
+**Note**: If both are provided, `BGG_API_KEY` takes precedence.
+
+### Username Configuration
 
 You can optionally set the `BGG_USERNAME` environment variable to enable "me" and "my" references in queries:
 
 ```json
 "bgg": {
     "env": {
-        "BGG_USERNAME": "your_bgg_username"
+        "BGG_USERNAME": "your_bgg_username",
+        "BGG_API_KEY": "your_api_key_here"
     }
 }
 ```

@@ -19,8 +19,8 @@ github.com/invopop/jsonschema v0.13.0/go.mod h1:ffZ5Km5SWWRAIN6wbDXItl95euhFz2uO
 github.com/jarcoal/httpmock v1.3.1 h1:iUx3whfZWVf3jT01hQTO/Eo5sAYtB2/rqaUuOtpInww=
 github.com/jarcoal/httpmock v1.3.1/go.mod h1:3yb8rc4BI7TCBhFY8ng0gjuLKJNquuDNiPaZjnENuYg=
 github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=
-github.com/kkjdaniel/gogeek v1.5.1 h1:dkNkrPuCo3vWnwdzdIRDI/ldIRujWbB6fGOAoj8P3bA=
-github.com/kkjdaniel/gogeek v1.5.1/go.mod h1:4TQbOfMLOVIEE6mRgWtuJezt9YxWRwV48iWXzjOZXqY=
+github.com/kkjdaniel/gogeek/v2 v2.0.0 h1:izkPLqVeYRcK4TyqtnFV3aXPR0nZdAvksVXroS1O1YQ=
+github.com/kkjdaniel/gogeek/v2 v2.0.0/go.mod h1:ES5xfYbD0ngwl4u5y/bvplDYyfLCLph926nJQuoEWqI=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=

@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kkjdaniel/gogeek/search"
-	"github.com/kkjdaniel/gogeek/thing"
+	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v2/search"
+	"github.com/kkjdaniel/gogeek/v2/thing"
 )
 
 type EssentialGameInfo struct {
@@ -117,14 +118,14 @@ func extractEssentialInfoList(items []thing.Item) []EssentialGameInfo {
 	return result
 }
 
-func findBestGameMatch(gameName string) (*search.SearchResult, error) {
-	searchResults, err := search.Query(gameName, true)
+func findBestGameMatch(client *gogeek.Client, gameName string) (*search.SearchResult, error) {
+	searchResults, err := search.Query(client, gameName, true)
 	if err != nil {
 		return nil, fmt.Errorf("search failed: %w", err)
 	}
-	
+
 	if len(searchResults.Items) == 0 {
-		searchResults, err = search.Query(gameName, false)
+		searchResults, err = search.Query(client, gameName, false)
 		if err != nil {
 			return nil, fmt.Errorf("search failed: %w", err)
 		}

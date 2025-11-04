@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kkjdaniel/gogeek/collection"
+	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v2/collection"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -41,7 +42,7 @@ type TradeSummary struct {
 	HasTradeOpportunity bool `json:"has_trade_opportunity"`
 }
 
-func TradeFinderTool() (mcp.Tool, server.ToolHandlerFunc) {
+func TradeFinderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-trade-finder",
 		mcp.WithDescription("Find what games user1 owns that user2 has on their wishlist. Shows potential trading opportunities."),
 		mcp.WithString("user1",
@@ -83,12 +84,12 @@ func TradeFinderTool() (mcp.Tool, server.ToolHandlerFunc) {
 			user2 = envUsername
 		}
 
-		user1Collection, err := collection.Query(user1, collection.WithOwned(true))
+		user1Collection, err := collection.Query(client, user1, collection.WithOwned(true))
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error fetching %s's collection: %v", user1, err)), nil
 		}
 
-		user2Wishlist, err := collection.Query(user2, collection.WithWishlist(true))
+		user2Wishlist, err := collection.Query(client, user2, collection.WithWishlist(true))
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error fetching %s's wishlist: %v", user2, err)), nil
 		}

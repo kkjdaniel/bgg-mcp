@@ -7,13 +7,14 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/kkjdaniel/gogeek/search"
-	"github.com/kkjdaniel/gogeek/thing"
+	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v2/search"
+	"github.com/kkjdaniel/gogeek/v2/thing"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func SearchTool() (mcp.Tool, server.ToolHandlerFunc) {
+func SearchTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-search",
 		mcp.WithDescription("Search for board games on BoardGameGeek (BGG) by name or part of a name using a broad search (e.g., 'Catan', 'Ticket to Ride')"),
 		mcp.WithString("query",
@@ -43,7 +44,7 @@ func SearchTool() (mcp.Tool, server.ToolHandlerFunc) {
 			typeFilter = t
 		}
 
-		gameDetails, err := searchAndSortGames(query, typeFilter, limit)
+		gameDetails, err := searchAndSortGames(client, query, typeFilter, limit)
 		if err != nil {
 			return mcp.NewToolResultText(err.Error()), nil
 		}
@@ -60,8 +61,8 @@ func SearchTool() (mcp.Tool, server.ToolHandlerFunc) {
 	return tool, handler
 }
 
-func searchAndSortGames(query, typeFilter string, limit int) (*thing.Items, error) {
-	result, err := search.Query(query, false)
+func searchAndSortGames(client *gogeek.Client, query, typeFilter string, limit int) (*thing.Items, error) {
+	result, err := search.Query(client, query, false)
 	if err != nil {
 		return nil, fmt.Errorf("search error: %v", err)
 	}
@@ -137,7 +138,7 @@ func searchAndSortGames(query, typeFilter string, limit int) (*thing.Items, erro
 		}
 
 		batch := gameIDs[i:end]
-		gameDetails, err := thing.Query(batch)
+		gameDetails, err := thing.Query(client, batch)
 		if err != nil {
 			return nil, fmt.Errorf("error fetching game details: %v", err)
 		}

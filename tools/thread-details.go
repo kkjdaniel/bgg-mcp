@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/kkjdaniel/gogeek/thread"
+	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v2/thread"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func ThreadDetailsTool() (mcp.Tool, server.ToolHandlerFunc) {
+func ThreadDetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-thread-details",
 		mcp.WithDescription("Get full content of a specific BoardGameGeek forum thread, including all posts and replies. Use this after finding relevant threads with bgg-rules."),
 		mcp.WithNumber("thread_id",
@@ -39,7 +40,7 @@ func ThreadDetailsTool() (mcp.Tool, server.ToolHandlerFunc) {
 		} else {
 			return mcp.NewToolResultText("thread_id parameter is required"), nil
 		}
-		threadDetail, err := thread.Query(threadID)
+		threadDetail, err := thread.Query(client, threadID)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Failed to get thread details: %v", err)), nil
 		}

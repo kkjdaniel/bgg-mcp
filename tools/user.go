@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/kkjdaniel/gogeek/user"
+	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v2/user"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func UserTool() (mcp.Tool, server.ToolHandlerFunc) {
+func UserTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-user",
 		mcp.WithDescription("Find details about a specific user on BoardGameGeek (BGG)"),
 		mcp.WithString("username",
@@ -31,7 +32,7 @@ func UserTool() (mcp.Tool, server.ToolHandlerFunc) {
 			name = envUsername
 		}
 
-		userDetails, err := user.Query(name)
+		userDetails, err := user.Query(client, name)
 		if err != nil {
 			return mcp.NewToolResultText(err.Error()), nil
 		}
