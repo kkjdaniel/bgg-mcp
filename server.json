@@ -2,7 +2,6 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
   "name": "io.github.kkjdaniel/bgg-mcp",
   "description": "BoardGameGeek MCP server providing access to BGG API data through standardized tools",
-  "status": "active",
   "repository": {
     "url": "https://github.com/kkjdaniel/bgg-mcp",
     "source": "github"
@@ -10,22 +9,12 @@
   "version": "1.3.2",
   "packages": [
     {
-      "registry_type": "oci",
-      "registry_base_url": "https://docker.io",
-      "identifier": "kdaniel/bgg-mcp",
+      "registryType": "oci",
+      "identifier": "docker.io/kdaniel/bgg-mcp",
       "version": "1.3.2",
       "transport": {
         "type": "stdio"
-      },
-      "environment_variables": [
-        {
-          "description": "Your BoardGameGeek username for references such as ME or MY in prompts",
-          "is_required": false,
-          "format": "string",
-          "is_secret": false,
-          "name": "BGG_USERNAME"
-        }
-      ]
+      }
     }
   ]
 }
