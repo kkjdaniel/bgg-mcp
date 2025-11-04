@@ -137,8 +137,7 @@ Note: Include "use bgg-rules" in your question to ensure the AI searches BGG for
 
 ## Installation
 
-> [!WARNING]
-> The previous Smithery deployment was removed unexpectedly - this has been restored but may cause issues with old connections. If you connected to Smithery before 16/10/25, refresh your setup using the updated link and connector URL below.
+> [!IMPORTANT] > **Authentication Required**: Most BGG MCP tools require authentication to access BoardGameGeek's API. See the [Configuration section](#configuration) below for setup instructions.
 
 You have multiple options for installing BGG MCP:
 
@@ -147,8 +146,8 @@ You have multiple options for installing BGG MCP:
 Get started in under a minute with [Smithery](https://smithery.ai/server/@kkjdaniel/bgg-mcp):
 
 1. **Sign up** at Smithery and select your client (e.g., Claude Desktop)
-2. **Follow the quick setup** - Smithery handles all configuration automatically
-3. **Start using BGG tools** immediately - no manual setup required
+2. **Click Configure** to set up your BGG authentication (see [Configuration](#configuration))
+3. **Connect** and start using BGG tools immediately
 
 #### Or via Connectors for Claude users
 
@@ -160,7 +159,6 @@ Add BGG MCP as a custom connector:
    https://server.smithery.ai/@kkjdaniel/bgg-mcp/mcp
    ```
 3. Click **Connect** to authorise
-4. If you previously added the connector before 16/10/25, re-add it with this updated URL to restore access
 
 That's it! The server uses the latest Streamable HTTP transport.
 
@@ -227,7 +225,7 @@ You can configure authentication using **either** `BGG_API_KEY` (recommended) or
 When connecting via [Smithery](https://smithery.ai/server/@kkjdaniel/bgg-mcp), you can configure authentication directly in the connection UI:
 
 1. Click **Configure** button on the BGG MCP server page
-2. Fill in the configuration form:
+2. Fill in the configuration form (under optional):
    - **BGG API Key** (recommended) - Get one at [boardgamegeek.com/applications](https://boardgamegeek.com/applications)
    - **BGG Cookie** (alternative) - Only if you're not using an API key
    - **BGG Username** - Your username for personalized features
