@@ -56,6 +56,17 @@ Game recommendations are powered by [Recommend.Games](https://recommend.games/),
 | ----------- | ------------------------------------------------------------------------------------------ |
 | `bgg-rules` | Answer rules questions by searching BGG forums for relevant discussions and clarifications |
 
+## Resources
+
+BGG MCP exposes resources that AI assistants can access directly for contextual information:
+
+| Resource              | URI                   | Description                                                       |
+| --------------------- | --------------------- | ----------------------------------------------------------------- |
+| `BGG Hotness`         | `bgg://hotness`       | Current BGG hotness list, always available                        |
+| `My BGG Collection`   | `bgg://my-collection` | Your personal BGG collection (requires `BGG_USERNAME` to be set)  |
+
+Resources provide AI assistants with direct access to BGG data without needing explicit tool calls, making conversations more natural and efficient.
+
 ## Prompts
 
 - **Trade Sales Post** - Generate a formatted sales post for your BGG 'for trade' collection with discounted market prices

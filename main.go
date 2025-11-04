@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/kkjdanie/bgg-mcp/prompts"
+	"github.com/kkjdanie/bgg-mcp/resources"
 	"github.com/kkjdanie/bgg-mcp/tools"
 	"github.com/kkjdaniel/gogeek/v2"
 	"github.com/mark3labs/mcp-go/server"
@@ -54,7 +55,7 @@ func createClientFromSessionConfig(apiKey, cookie string) *gogeek.Client {
 func createMCPServer(client *gogeek.Client) *server.MCPServer {
 	s := server.NewMCPServer(
 		"BGG MCP",
-		"1.4.0",
+		"1.5.1",
 		server.WithResourceCapabilities(true, true),
 		server.WithPromptCapabilities(true),
 		server.WithLogging(),
@@ -90,6 +91,12 @@ func createMCPServer(client *gogeek.Client) *server.MCPServer {
 
 	threadDetailsTool, threadDetailsHandler := tools.ThreadDetailsTool(client)
 	s.AddTool(threadDetailsTool, threadDetailsHandler)
+
+	hotnessResource, hotnessResourceHandler := resources.HotnessResource(client)
+	s.AddResource(hotnessResource, hotnessResourceHandler)
+
+	myCollectionResource, myCollectionResourceHandler := resources.MyCollectionResource(client)
+	s.AddResource(myCollectionResource, myCollectionResourceHandler)
 
 	prompts.RegisterPrompts(s)
 
