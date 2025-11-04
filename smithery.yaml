@@ -15,16 +15,12 @@ startCommand:
       BGG_API_KEY:
         type: "string"
         title: "BGG API Key (Recommended)"
-        description: "API key from BoardGameGeek for authentication. Get one at https://boardgamegeek.com/applications. Optional but recommended for reliability."
-        default: ""
+        description: "API key from BoardGameGeek for authentication. Get one at https://boardgamegeek.com/applications"
       BGG_COOKIE:
         type: "string"
         title: "BGG Cookie (Alternative)"
-        description: "Cookie string for BGG authentication (format: 'bggusername=user; bggpassword=pass; SessionID=xyz'). Only needed if not using API key."
-        default: ""
+        description: "Cookie string for BGG authentication (format: 'bggusername=user; bggpassword=pass; SessionID=xyz'). Only needed if not using API key"
       BGG_USERNAME:
         type: "string"
         title: "BGG Username"
-        description: "Your BGG username for personalized features. Enables 'my collection', 'my profile', etc."
-        default: ""
-    additionalProperties: false
+        description: "Your BGG username for personalized features (enables 'my collection', 'my profile', etc.)"
