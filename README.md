@@ -147,7 +147,7 @@ Note: Include "use bgg-rules" in your question to ensure the AI searches BGG for
 
 ## Installation
 
-> [!IMPORTANT] > **Authentication Required**: Most BGG MCP tools require authentication to access BoardGameGeek's API. See the [Configuration section](#configuration) below for setup instructions.
+> **Authentication Required**: Most BGG MCP tools require authentication to access BoardGameGeek's API. See the [Configuration section](#configuration) below for setup instructions.
 
 You have multiple options for installing BGG MCP:
 
