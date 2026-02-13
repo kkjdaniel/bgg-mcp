@@ -150,15 +150,28 @@ Note: Include "use bgg-rules" in your question to ensure the AI searches BGG for
 
 > **Note**: Smithery has been deprecated and no longer hosts MCP servers. Please use one of the options below instead.
 
-You can install BGG MCP via the MCP Registry or build it locally:
+### A) Docker (Recommended)
 
-### A) MCP Registry (Recommended)
+BGG MCP is published to [Docker Hub](https://hub.docker.com/r/kdaniel/bgg-mcp) and listed on the [MCP Registry](https://github.com/modelcontextprotocol/registry). Add the following to your `claude_desktop_config.json` (Claude Desktop) or `settings.json` (VS Code / Cursor):
 
-Install via the [MCP Registry](https://github.com/modelcontextprotocol/registry):
-
-```bash
-mcp install io.github.kkjdaniel/bgg-mcp
+```json
+"bgg": {
+    "command": "docker",
+    "args": ["run", "-i", "--rm",
+        "-e", "BGG_API_KEY",
+        "-e", "BGG_USERNAME",
+        "kdaniel/bgg-mcp"
+    ],
+    "env": {
+        "BGG_API_KEY": "your_api_key_here",
+        "BGG_USERNAME": "your_bgg_username"
+    }
+}
 ```
+
+> See [Configuration](#configuration) below for details on obtaining a BGG API key and setting up your username.
+
+For more details on connecting MCP servers to your client, see the [official MCP guide](https://modelcontextprotocol.io/docs/develop/connect-local-servers).
 
 ### B) Manual Setup
 
