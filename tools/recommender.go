@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 
 	"github.com/kkjdaniel/gogeek/v2"
 	"github.com/kkjdaniel/gogeek/v2/thing"
@@ -24,12 +23,12 @@ type RecommendGameItem struct {
 
 func RecommenderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-recommender",
-		mcp.WithDescription("Get game recommendations based on a specific game using either the BoardGameGeek (BGG) ID or name directly. ID is preferred for faster responses."),
+		mcp.WithDescription("Get game recommendations similar to a specific board game. Provide either 'name' or 'id', not both."),
 		mcp.WithString("name",
-			mcp.Description("Name of the game to base recommendations on (slower than using ID)"),
+			mcp.Description("Name of the game to base recommendations on. Use when the BGG ID is not known."),
 		),
-		mcp.WithString("id",
-			mcp.Description("BoardGameGeek (BGG) ID of the game to base recommendations on (preferred for speed)"),
+		mcp.WithNumber("id",
+			mcp.Description("BoardGameGeek (BGG) ID of the game to base recommendations on. Preferred over 'name' when already known."),
 		),
 		mcp.WithNumber("min_votes",
 			mcp.Description("Minimum votes threshold for recommendation quality (default: 30)"),
@@ -51,11 +50,8 @@ func RecommenderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 				return mcp.NewToolResultText("No games found with that name"), nil
 			}
 			gameID = gameDetails.Items[0].ID
-		} else if idVal, ok := arguments["id"].(string); ok && idVal != "" {
-			gameID, err = strconv.Atoi(idVal)
-			if err != nil {
-				return mcp.NewToolResultText("BGG ID must be a valid number"), nil
-			}
+		} else if idVal, ok := arguments["id"].(float64); ok && idVal > 0 {
+			gameID = int(idVal)
 		} else {
 			return mcp.NewToolResultText("Either 'name' or 'id' parameter must be provided"), nil
 		}

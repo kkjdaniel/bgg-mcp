@@ -3,6 +3,7 @@ package tools
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/kkjdaniel/gogeek/v2"
 	"github.com/kkjdaniel/gogeek/v2/hot"
@@ -12,7 +13,7 @@ import (
 
 func HotnessTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-hot",
-		mcp.WithDescription("Find the current board game hotness on BoardGameGeek (BGG)"),
+		mcp.WithDescription("Find the current trending board game hotness on BoardGameGeek (BGG)"),
 	)
 
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -22,7 +23,10 @@ func HotnessTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		}
 
 		if len(hotItems.Items) > 0 {
-			out, _ := json.Marshal(hotItems.Items)
+			out, err := json.Marshal(hotItems.Items)
+			if err != nil {
+				return mcp.NewToolResultText(fmt.Sprintf("Error formatting results: %v", err)), nil
+			}
 			return mcp.NewToolResultText(string(out)), nil
 		}
 

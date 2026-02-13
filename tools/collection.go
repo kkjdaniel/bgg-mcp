@@ -14,7 +14,7 @@ import (
 
 func CollectionTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-collection",
-		mcp.WithDescription("Find the details about a specific users board game collection on BoardGameGeek (BGG)"),
+		mcp.WithDescription("Query a user's board game collection on BoardGameGeek (BGG). Returns all matching games by default. Use the filter parameters to narrow results (e.g. owned, wishlist, rated, play count)."),
 		mcp.WithString("username",
 			mcp.Required(),
 			mcp.Description("The username of the BoardGameGeek (BGG) user who owns the collection. When the user refers to themselves (me, my, I), use 'SELF' as the value."),

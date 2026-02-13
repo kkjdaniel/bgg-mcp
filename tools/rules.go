@@ -27,10 +27,10 @@ func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-rules",
 		mcp.WithDescription("Use this tool when users ask rules questions about board games (e.g., 'How does X work?', 'Can I do Y?', 'What happens when Z?'). Searches BoardGameGeek rules forums to find answers and clarifications from the community."),
 		mcp.WithString("name",
-			mcp.Description("The name of the board game"),
+			mcp.Description("The name of the board game. Use when the BGG ID is not known."),
 		),
 		mcp.WithNumber("id",
-			mcp.Description("The BoardGameGeek ID of the board game"),
+			mcp.Description("The BoardGameGeek ID of the board game. Preferred over 'name' when already known."),
 		),
 	)
 

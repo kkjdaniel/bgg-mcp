@@ -21,10 +21,12 @@ func PriceTool() (mcp.Tool, server.ToolHandlerFunc) {
 			mcp.Description("Comma-separated BGG IDs (e.g., '12,844,2096,13857')"),
 		),
 		mcp.WithString("currency",
-			mcp.Description("Currency code: DKK, GBP, SEK, EUR, or USD (default: USD)"),
+			mcp.Description("Currency code (default: USD)"),
+			mcp.Enum("DKK", "GBP", "SEK", "EUR", "USD"),
 		),
 		mcp.WithString("destination",
-			mcp.Description("Destination country: DK, SE, GB, DE, or US (default: US)"),
+			mcp.Description("Destination country (default: US)"),
+			mcp.Enum("DK", "SE", "GB", "DE", "US"),
 		),
 	)
 

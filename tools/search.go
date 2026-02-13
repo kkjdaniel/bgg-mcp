@@ -25,7 +25,7 @@ func SearchTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			mcp.Description("Maximum number of results to return (default: 30)"),
 		),
 		mcp.WithString("type",
-			mcp.Description("Filter by type (default: all, options: 'boardgame' (aka base game), 'boardgameexpansion', or 'all')"),
+			mcp.Description("Filter results by game type (default: all)"),
 			mcp.Enum("all", "boardgame", "boardgameexpansion"),
 		),
 	)

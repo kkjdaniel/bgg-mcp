@@ -1,10 +1,12 @@
 module github.com/kkjdanie/bgg-mcp
 
-go 1.23
+go 1.23.0
+
+toolchain go1.24.3
 
 require (
 	github.com/kkjdaniel/gogeek/v2 v2.0.0
-	github.com/mark3labs/mcp-go v0.39.1
+	github.com/mark3labs/mcp-go v0.43.2
 )
 
 require (

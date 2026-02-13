@@ -14,18 +14,16 @@ import (
 
 func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-details",
-		mcp.WithDescription("Find the details about a specific board game on BoardGameGeek (BGG)"),
+		mcp.WithDescription("Get detailed information about board games on BoardGameGeek (BGG). Use 'name' for a single game lookup by name, 'id' for a single game lookup by BGG ID, or 'ids' to fetch multiple games at once. Only provide one of these parameters."),
 		mcp.WithString("name",
-			mcp.Description("The name of the board game"),
+			mcp.Description("The name of the board game to look up. Use this when you only have the game's name."),
 		),
 		mcp.WithNumber("id",
-			mcp.Description("The BoardGameGeek ID of the board game"),
+			mcp.Description("The BoardGameGeek ID of a single board game. Preferred over 'name' when the ID is already known."),
 		),
 		mcp.WithArray("ids",
-			mcp.Description("Array of BoardGameGeek IDs to get details for multiple games at once (maximum 20 IDs per request)"),
-		),
-		mcp.WithBoolean("full_details",
-			mcp.Description("Return the complete BGG API response instead of essential info. WARNING: This returns significantly more data and can overload AI context windows. ONLY set this to true if the user explicitly requests 'full details', 'complete data', or similar. Default behavior returns essential info which is sufficient for most use cases."),
+			mcp.Description("Array of BoardGameGeek IDs for fetching multiple games in a single request (maximum 20). Use this instead of 'id' when you need details for more than one game."),
+			mcp.WithNumberItems(),
 		),
 	)
 
@@ -91,30 +89,17 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		}
 
 		if len(things.Items) > 0 {
-			fullDetails := false
-			if fd, ok := arguments["full_details"].(bool); ok {
-				fullDetails = fd
-			}
-
 			var out []byte
 			var err error
-			
+
 			if len(gameIDs) == 1 {
-				if fullDetails {
-					out, err = json.Marshal(things.Items[0])
-				} else {
-					essentialInfo := extractEssentialInfo(things.Items[0])
-					out, err = json.Marshal(essentialInfo)
-				}
+				essentialInfo := extractEssentialInfo(things.Items[0])
+				out, err = json.Marshal(essentialInfo)
 			} else {
-				if fullDetails {
-					out, err = json.Marshal(things.Items)
-				} else {
-					essentialInfo := extractEssentialInfoList(things.Items)
-					out, err = json.Marshal(essentialInfo)
-				}
+				essentialInfo := extractEssentialInfoList(things.Items)
+				out, err = json.Marshal(essentialInfo)
 			}
-			
+
 			if err != nil {
 				return mcp.NewToolResultText(fmt.Sprintf("Error formatting results: %v", err)), nil
 			}

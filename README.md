@@ -59,10 +59,10 @@ Game recommendations are powered by [Recommend.Games](https://recommend.games/),
 
 BGG MCP exposes resources that AI assistants can access directly for contextual information:
 
-| Resource              | URI                   | Description                                                       |
-| --------------------- | --------------------- | ----------------------------------------------------------------- |
-| `BGG Hotness`         | `bgg://hotness`       | Current BGG hotness list, always available                        |
-| `My BGG Collection`   | `bgg://my-collection` | Your personal BGG collection (requires `BGG_USERNAME` to be set)  |
+| Resource            | URI                   | Description                                                      |
+| ------------------- | --------------------- | ---------------------------------------------------------------- |
+| `BGG Hotness`       | `bgg://hotness`       | Current BGG hotness list, always available                       |
+| `My BGG Collection` | `bgg://my-collection` | Your personal BGG collection (requires `BGG_USERNAME` to be set) |
 
 Resources provide AI assistants with direct access to BGG data without needing explicit tool calls, making conversations more natural and efficient.
 
@@ -243,7 +243,7 @@ When connecting via [Smithery](https://smithery.ai/server/@kkjdaniel/bgg-mcp), y
 
 Your settings are stored securely and applied automatically when you use BGG MCP tools.
 
-#### For Manual Setup
+#### For Manual (Local) Setup
 
 ##### Option 1: API Key (Recommended)
 
@@ -269,11 +269,11 @@ Alternatively, you can use cookie-based authentication:
 }
 ```
 
-**Note**: If both are provided, `BGG_API_KEY` takes precedence.
+**Note**: If both are provided, `BGG_API_KEY` will be used by default.
 
 ### Username Configuration
 
-You can optionally set the `BGG_USERNAME` environment variable to enable "me" and "my" references in queries:
+You can optionally set the `BGG_USERNAME` environment variable to enable "me" and "my" references in queries without needing to explicitly state your username:
 
 ```json
 "bgg": {

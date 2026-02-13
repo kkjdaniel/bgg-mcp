@@ -3,6 +3,7 @@ package tools
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/kkjdaniel/gogeek/v2"
@@ -37,7 +38,10 @@ func UserTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultText(err.Error()), nil
 		}
 
-		out, _ := json.Marshal(userDetails)
+		out, err := json.Marshal(userDetails)
+		if err != nil {
+			return mcp.NewToolResultText(fmt.Sprintf("Error formatting results: %v", err)), nil
+		}
 		return mcp.NewToolResultText(string(out)), nil
 
 	}
