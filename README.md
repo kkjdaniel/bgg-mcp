@@ -4,7 +4,6 @@
 <h1 align="center">BGG MCP: BoardGameGeek MCP Server</h1>
 
 <p align="center">
-  <a href="https://smithery.ai/server/@kkjdaniel/bgg-mcp"><img src="https://smithery.ai/badge/@kkjdaniel/bgg-mcp" alt="smithery badge"></a>
   <a href="https://archestra.ai/mcp-catalog/kkjdaniel__bgg-mcp"><img src="https://archestra.ai/mcp-catalog/api/badge/quality/kkjdaniel/bgg-mcp" alt="trust score badge"></a>
   <a href="https://github.com/modelcontextprotocol/registry"><img src="https://img.shields.io/badge/MCP_Registry-BGG_MCP-green" alt="MCP Registry"></a>
   <br>
@@ -149,40 +148,19 @@ Note: Include "use bgg-rules" in your question to ensure the AI searches BGG for
 
 > **Authentication Required**: Most BGG MCP tools require authentication to access BoardGameGeek's API. See the [Configuration section](#configuration) below for setup instructions.
 
-You have multiple options for installing BGG MCP:
+> **Note**: Smithery has been deprecated and no longer hosts MCP servers. Please use one of the options below instead.
 
-### A) Installing via Smithery (Recommended)
+You can install BGG MCP via the MCP Registry or build it locally:
 
-Get started in under a minute with [Smithery](https://smithery.ai/server/@kkjdaniel/bgg-mcp):
+### A) MCP Registry (Recommended)
 
-1. **Sign up** at Smithery and select your client (e.g., Claude Desktop)
-2. **Click Configure** to set up your BGG authentication (see [Configuration](#configuration))
-3. **Connect** and start using BGG tools immediately
-
-#### Or via Connectors for Claude users
-
-Add BGG MCP as a custom connector:
-
-1. Go to **Settings → Connectors → Add custom connector**
-2. Enter this URL:
-   ```
-   https://server.smithery.ai/@kkjdaniel/bgg-mcp/mcp
-   ```
-3. Click **Connect** to authorise
-
-That's it! The server uses the latest Streamable HTTP transport.
-
-**Tip:** Connectors added on Claude Desktop will also appear and work on mobile!
-
-### B) MCP Registry
-
-Install via the MCP Registry:
+Install via the [MCP Registry](https://github.com/modelcontextprotocol/registry):
 
 ```bash
 mcp install io.github.kkjdaniel/bgg-mcp
 ```
 
-### C) Manual Setup
+### B) Manual Setup
 
 #### 1. Install Go
 
@@ -230,20 +208,7 @@ BGG MCP v2.0+ uses the GoGeek v2.0 library which requires authentication for rel
 
 You can configure authentication using **either** `BGG_API_KEY` (recommended) or `BGG_COOKIE`:
 
-#### For Smithery Users
-
-When connecting via [Smithery](https://smithery.ai/server/@kkjdaniel/bgg-mcp), you can configure authentication directly in the connection UI:
-
-1. Click **Configure** button on the BGG MCP server page
-2. Fill in the configuration form (under optional):
-   - **BGG API Key** (recommended) - Get one at [boardgamegeek.com/applications](https://boardgamegeek.com/applications)
-   - **BGG Cookie** (alternative) - Only if you're not using an API key
-   - **BGG Username** - Your username for personalized features
-3. Click **Save Configuration**, then connect with this profile
-
-Your settings are stored securely and applied automatically when you use BGG MCP tools.
-
-#### For Manual (Local) Setup
+#### Authentication Setup
 
 ##### Option 1: API Key (Recommended)
 

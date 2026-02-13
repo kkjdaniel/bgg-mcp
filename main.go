@@ -55,7 +55,7 @@ func createClientFromSessionConfig(apiKey, cookie string) *gogeek.Client {
 func createMCPServer(client *gogeek.Client) *server.MCPServer {
 	s := server.NewMCPServer(
 		"BGG MCP",
-		"1.5.1",
+		"1.6.0",
 		server.WithResourceCapabilities(true, true),
 		server.WithPromptCapabilities(true),
 		server.WithLogging(),
@@ -221,7 +221,7 @@ func runHTTPServer(port string) {
 
 	log.Printf("Starting HTTP server on port %s", port)
 	log.Printf("HTTP endpoint: %s/mcp", baseURL)
-	log.Printf("Supports Smithery session configuration via query parameters")
+	log.Printf("Supports session configuration via query parameters")
 
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("HTTP server error: %v", err)
