@@ -14,7 +14,7 @@ import (
 
 func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-details",
-		mcp.WithDescription("Get detailed information about board games on BoardGameGeek (BGG). Use 'name' for a single game lookup by name, 'id' for a single game lookup by BGG ID, or 'ids' to fetch multiple games at once. Only provide one of these parameters."),
+		mcp.WithDescription("Get detailed information about board games on BoardGameGeek (BGG) including description, mechanics, categories, player count, playtime, complexity, and ratings. Use this tool to deep dive into games found via other tools (e.g. after getting collection results or search results that only return basic info). Use 'name' for a single game lookup by name, 'id' for a single game lookup by BGG ID, or 'ids' to fetch multiple games at once (up to 20). Only provide one of these parameters."),
 		mcp.WithString("name",
 			mcp.Description("The name of the board game to look up. Use this when you only have the game's name."),
 		),

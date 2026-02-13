@@ -14,6 +14,9 @@
 
 BGG MCP provides access to the BoardGameGeek API through the [Model Context Protocol](https://www.anthropic.com/news/model-context-protocol), enabling retrieval and filtering of board game data, user collections, and profiles. The server is implemented in Go, using the [GoGeek](https://github.com/kkjdaniel/gogeek) library, which helps ensure robust API interactions.
 
+> [!NOTE]
+> Smithery has been deprecated and no longer hosts MCP servers. Please use one of the installation options below instead.
+
 Price data is provided by [BoardGamePrices.co.uk](https://boardgameprices.co.uk), offering real-time pricing from multiple retailers.
 
 Game recommendations are powered by [Recommend.Games](https://recommend.games/), which provides algorithmic similarity recommendations based on BoardGameGeek data.
@@ -67,8 +70,12 @@ Resources provide AI assistants with direct access to BGG data without needing e
 
 ## Prompts
 
-- **Trade Sales Post** - Generate a formatted sales post for your BGG 'for trade' collection with discounted market prices
-- **Game Recommendations** - Get personalized game recommendations based on your BGG collection and preferences
+BGG MCP includes pre-configured prompts for common workflows:
+
+| Prompt                   | Description                                                                          |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| `Trade Sales Post`       | Generate a formatted sales post for your BGG 'for trade' collection with discounted market prices |
+| `Game Recommendations`   | Get personalized game recommendations based on your BGG collection and preferences   |
 
 ## Example Prompts
 
@@ -147,8 +154,6 @@ Note: Include "use bgg-rules" in your question to ensure the AI searches BGG for
 ## Installation
 
 > **Authentication Required**: Most BGG MCP tools require authentication to access BoardGameGeek's API. See the [Configuration section](#configuration) below for setup instructions.
-
-> **Note**: Smithery has been deprecated and no longer hosts MCP servers. Please use one of the options below instead.
 
 ### A) Docker (Recommended)
 
