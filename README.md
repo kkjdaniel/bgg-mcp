@@ -14,9 +14,6 @@
 
 BGG MCP provides access to the BoardGameGeek API through the [Model Context Protocol](https://www.anthropic.com/news/model-context-protocol), enabling retrieval and filtering of board game data, user collections, and profiles. The server is implemented in Go, using the [GoGeek](https://github.com/kkjdaniel/gogeek) library, which helps ensure robust API interactions.
 
-> [!NOTE]
-> Smithery has been deprecated and no longer hosts MCP servers. Please use one of the installation options below instead.
-
 Price data is provided by [BoardGamePrices.co.uk](https://boardgameprices.co.uk), offering real-time pricing from multiple retailers.
 
 Game recommendations are powered by [Recommend.Games](https://recommend.games/), which provides algorithmic similarity recommendations based on BoardGameGeek data.
@@ -65,8 +62,6 @@ BGG MCP exposes resources that AI assistants can access directly for contextual 
 | ------------------- | --------------------- | ---------------------------------------------------------------- |
 | `BGG Hotness`       | `bgg://hotness`       | Current BGG hotness list, always available                       |
 | `My BGG Collection` | `bgg://my-collection` | Your personal BGG collection (requires `BGG_USERNAME` to be set) |
-
-Resources provide AI assistants with direct access to BGG data without needing explicit tool calls, making conversations more natural and efficient.
 
 ## Prompts
 
