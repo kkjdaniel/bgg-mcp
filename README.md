@@ -213,6 +213,10 @@ In the `settings.json` (VS Code / Cursor) or `claude_desktop_config.json` add th
 
 More details for configuring Claude can be [found here](https://modelcontextprotocol.io/quickstart/user).
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/kkjdaniel-bgg-mcp).
+
 ## Configuration
 
 ### Authentication
