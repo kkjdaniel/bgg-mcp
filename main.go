@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kkjdanie/bgg-mcp/prompts"
-	"github.com/kkjdanie/bgg-mcp/resources"
-	"github.com/kkjdanie/bgg-mcp/tools"
+	"github.com/kkjdaniel/bgg-mcp/prompts"
+	"github.com/kkjdaniel/bgg-mcp/resources"
+	"github.com/kkjdaniel/bgg-mcp/tools"
 	"github.com/kkjdaniel/gogeek/v2"
 	"github.com/mark3labs/mcp-go/server"
 )
