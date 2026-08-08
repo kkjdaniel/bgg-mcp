@@ -14,7 +14,7 @@ import (
 	"github.com/kkjdaniel/bgg-mcp/prompts"
 	"github.com/kkjdaniel/bgg-mcp/resources"
 	"github.com/kkjdaniel/bgg-mcp/tools"
-	"github.com/kkjdaniel/gogeek/v2"
+	"github.com/kkjdaniel/gogeek/v3"
 	"github.com/mark3labs/mcp-go/server"
 )
 
@@ -24,14 +24,14 @@ func initializeGoGeekClient() *gogeek.Client {
 
 func createClientFromEnv() *gogeek.Client {
 	if apiKey := os.Getenv("BGG_API_KEY"); apiKey != "" {
-		return gogeek.NewClient(gogeek.WithAPIKey(apiKey))
+		return gogeek.NewClient(gogeek.APIKey(apiKey))
 	}
 
 	if cookie := os.Getenv("BGG_COOKIE"); cookie != "" {
-		return gogeek.NewClient(gogeek.WithCookie(cookie))
+		return gogeek.NewClient(gogeek.Cookie(cookie))
 	}
 
-	return gogeek.NewClient()
+	return gogeek.NewClient(gogeek.Auth{})
 }
 
 func parseSessionConfig(r *http.Request) (apiKey, cookie, username string) {
@@ -44,12 +44,12 @@ func parseSessionConfig(r *http.Request) (apiKey, cookie, username string) {
 
 func createClientFromSessionConfig(apiKey, cookie string) *gogeek.Client {
 	if apiKey != "" {
-		return gogeek.NewClient(gogeek.WithAPIKey(apiKey))
+		return gogeek.NewClient(gogeek.APIKey(apiKey))
 	}
 	if cookie != "" {
-		return gogeek.NewClient(gogeek.WithCookie(cookie))
+		return gogeek.NewClient(gogeek.Cookie(cookie))
 	}
-	return gogeek.NewClient()
+	return gogeek.NewClient(gogeek.Auth{})
 }
 
 func createMCPServer(client *gogeek.Client) *server.MCPServer {

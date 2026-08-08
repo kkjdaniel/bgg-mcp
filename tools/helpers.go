@@ -1,12 +1,13 @@
 package tools
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/search"
-	"github.com/kkjdaniel/gogeek/v2/thing"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/search"
+	"github.com/kkjdaniel/gogeek/v3/thing"
 )
 
 type EssentialGameInfo struct {
@@ -118,14 +119,14 @@ func extractEssentialInfoList(items []thing.Item) []EssentialGameInfo {
 	return result
 }
 
-func findBestGameMatch(client *gogeek.Client, gameName string) (*search.SearchResult, error) {
-	searchResults, err := search.Query(client, gameName, true)
+func findBestGameMatch(ctx context.Context, client *gogeek.Client, gameName string) (*search.SearchResult, error) {
+	searchResults, err := search.Query(ctx, client, gameName, search.WithExact())
 	if err != nil {
 		return nil, fmt.Errorf("search failed: %w", err)
 	}
 
 	if len(searchResults.Items) == 0 {
-		searchResults, err = search.Query(client, gameName, false)
+		searchResults, err = search.Query(ctx, client, gameName)
 		if err != nil {
 			return nil, fmt.Errorf("search failed: %w", err)
 		}

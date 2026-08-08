@@ -217,7 +217,7 @@ More details for configuring Claude can be [found here](https://modelcontextprot
 
 ### Authentication
 
-BGG MCP v2.0+ uses the GoGeek v2.0 library which requires authentication for reliable access to BoardGameGeek's API.
+BGG MCP uses the GoGeek v3 library, which requires authentication for access to BoardGameGeek's API.
 
 You can configure authentication using **either** `BGG_API_KEY` (recommended) or `BGG_COOKIE`:
 

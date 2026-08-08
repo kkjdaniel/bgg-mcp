@@ -7,9 +7,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/search"
-	"github.com/kkjdaniel/gogeek/v2/thing"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/search"
+	"github.com/kkjdaniel/gogeek/v3/thing"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -44,7 +44,7 @@ func SearchTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			typeFilter = t
 		}
 
-		gameDetails, err := searchAndSortGames(client, query, typeFilter, limit)
+		gameDetails, err := searchAndSortGames(ctx, client, query, typeFilter, limit)
 		if err != nil {
 			return mcp.NewToolResultText(err.Error()), nil
 		}
@@ -61,8 +61,8 @@ func SearchTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	return tool, handler
 }
 
-func searchAndSortGames(client *gogeek.Client, query, typeFilter string, limit int) (*thing.Items, error) {
-	result, err := search.Query(client, query, false)
+func searchAndSortGames(ctx context.Context, client *gogeek.Client, query, typeFilter string, limit int) (*thing.Items, error) {
+	result, err := search.Query(ctx, client, query)
 	if err != nil {
 		return nil, fmt.Errorf("search error: %v", err)
 	}
@@ -138,7 +138,7 @@ func searchAndSortGames(client *gogeek.Client, query, typeFilter string, limit i
 		}
 
 		batch := gameIDs[i:end]
-		gameDetails, err := thing.Query(client, batch)
+		gameDetails, err := thing.Query(ctx, client, batch)
 		if err != nil {
 			return nil, fmt.Errorf("error fetching game details: %v", err)
 		}

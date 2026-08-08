@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/thing"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/thing"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -74,7 +74,7 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			gameIDs = []int{gameID}
 		} else if nameVal, ok := arguments["name"]; ok && nameVal != nil {
 			name := nameVal.(string)
-			bestMatch, err := findBestGameMatch(client, name)
+			bestMatch, err := findBestGameMatch(ctx, client, name)
 			if err != nil {
 				return mcp.NewToolResultText(fmt.Sprintf("Failed to find game: %v", err)), nil
 			}
@@ -83,7 +83,7 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultText("Either 'name', 'id', or 'ids' parameter must be provided"), nil
 		}
 
-		things, err := thing.Query(client, gameIDs)
+		things, err := thing.Query(ctx, client, gameIDs)
 		if err != nil {
 			return mcp.NewToolResultText(err.Error()), nil
 		}

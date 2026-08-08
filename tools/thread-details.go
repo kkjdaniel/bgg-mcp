@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/thread"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/thread"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -40,7 +40,7 @@ func ThreadDetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc)
 		} else {
 			return mcp.NewToolResultText("thread_id parameter is required"), nil
 		}
-		threadDetail, err := thread.Query(client, threadID)
+		threadDetail, err := thread.Query(ctx, client, threadID)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Failed to get thread details: %v", err)), nil
 		}

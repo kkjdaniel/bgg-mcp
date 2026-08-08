@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/hot"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/hot"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -17,7 +17,7 @@ func HotnessTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	)
 
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		hotItems, err := hot.Query(client, hot.ItemTypeBoardGame)
+		hotItems, err := hot.Query(ctx, client, hot.ItemTypeBoardGame)
 		if err != nil {
 			return mcp.NewToolResultText(err.Error()), nil
 		}

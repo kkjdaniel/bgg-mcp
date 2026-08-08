@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/forum"
-	"github.com/kkjdaniel/gogeek/v2/forumlist"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/forum"
+	"github.com/kkjdaniel/gogeek/v3/forumlist"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -53,7 +53,7 @@ func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			}
 		} else if nameVal, ok := arguments["name"]; ok && nameVal != nil {
 			gameName = nameVal.(string)
-			bestMatch, err := findBestGameMatch(client, gameName)
+			bestMatch, err := findBestGameMatch(ctx, client, gameName)
 			if err != nil {
 				return mcp.NewToolResultText(fmt.Sprintf("Failed to find game: %v", err)), nil
 			}
@@ -63,7 +63,7 @@ func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultText("Either 'name' or 'id' parameter is required"), nil
 		}
 
-		forums, err := forumlist.Query(client, gameID, forumlist.Thing)
+		forums, err := forumlist.Query(ctx, client, gameID, forumlist.Thing)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Failed to get forum list: %v", err)), nil
 		}
@@ -98,9 +98,9 @@ func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			var err error
 
 			if page == 1 {
-				rulesForumData, err = forum.Query(client, rulesForumID)
+				rulesForumData, err = forum.Query(ctx, client, rulesForumID)
 			} else {
-				rulesForumData, err = forum.Query(client, rulesForumID, forum.WithPage(page))
+				rulesForumData, err = forum.Query(ctx, client, rulesForumID, forum.WithPage(page))
 			}
 
 			if err != nil {

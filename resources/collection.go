@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/collection"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/collection"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -34,7 +34,7 @@ func MyCollectionResource(client *gogeek.Client) (mcp.Resource, server.ResourceH
 			return nil, fmt.Errorf("BGG_USERNAME environment variable not set")
 		}
 
-		result, err := collection.Query(client, username, collection.WithOwned(true))
+		result, err := collection.Query(ctx, client, username, collection.WithOwned(true))
 		if err != nil {
 			return nil, fmt.Errorf("error fetching collection: %v", err)
 		}
