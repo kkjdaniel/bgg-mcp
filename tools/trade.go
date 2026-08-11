@@ -13,27 +13,27 @@ import (
 )
 
 type TradeOpportunity struct {
-	User1Username    string          `json:"user1_username"`
-	User2Username    string          `json:"user2_username"`
-	User1HasWanted   []TradeItem     `json:"user1_has_wanted"`
-	User2Wishlist    []TradeItem     `json:"user2_wishlist"`
-	Summary          TradeSummary    `json:"summary"`
+	User1Username  string       `json:"user1_username"`
+	User2Username  string       `json:"user2_username"`
+	User1HasWanted []TradeItem  `json:"user1_has_wanted"`
+	User2Wishlist  []TradeItem  `json:"user2_wishlist"`
+	Summary        TradeSummary `json:"summary"`
 }
 
 type TradeItem struct {
-	GameID       int     `json:"game_id"`
-	Name         string  `json:"name"`
-	YearPublished int    `json:"year_published"`
-	ForTrade     bool    `json:"for_trade"`
-	WantInTrade  bool    `json:"want_in_trade"`
-	UserRating   float64 `json:"user_rating,omitempty"`
-	BGGRating    float64 `json:"bgg_rating,omitempty"`
+	GameID        int     `json:"game_id"`
+	Name          string  `json:"name"`
+	YearPublished int     `json:"year_published"`
+	ForTrade      bool    `json:"for_trade"`
+	WantInTrade   bool    `json:"want_in_trade"`
+	UserRating    float64 `json:"user_rating,omitempty"`
+	BGGRating     float64 `json:"bgg_rating,omitempty"`
 }
 
 type BasicGameInfo struct {
-	GameID       int    `json:"game_id"`
-	Name         string `json:"name"`
-	YearPublished int   `json:"year_published"`
+	GameID        int    `json:"game_id"`
+	Name          string `json:"name"`
+	YearPublished int    `json:"year_published"`
 }
 
 type TradeSummary struct {
@@ -49,7 +49,7 @@ func TradeFinderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			mcp.Required(),
 			mcp.Description("BGG username whose collection will be checked. When the user refers to themselves (me, my, I), use 'SELF' as the value."),
 		),
-		mcp.WithString("user2", 
+		mcp.WithString("user2",
 			mcp.Required(),
 			mcp.Description("BGG username whose wishlist will be checked against user1's collection"),
 		),
@@ -119,34 +119,34 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 	for _, user1Item := range user1Col.Items {
 		if _, exists := user2WishlistMap[user1Item.ObjectID]; exists {
 			user1HasWanted = append(user1HasWanted, TradeItem{
-				GameID:       user1Item.ObjectID,
-				Name:         user1Item.Name,
+				GameID:        user1Item.ObjectID,
+				Name:          user1Item.Name,
 				YearPublished: user1Item.YearPublished,
-				ForTrade:     user1Item.Status.ForTrade == 1,
-				WantInTrade:  user1Item.Status.Want == 1,
+				ForTrade:      user1Item.Status.ForTrade == 1,
+				WantInTrade:   user1Item.Status.Want == 1,
 			})
 		}
 	}
 
 	for _, wishlistItem := range user2WishlistCol.Items {
 		user2Wishlist = append(user2Wishlist, TradeItem{
-			GameID:       wishlistItem.ObjectID,
-			Name:         wishlistItem.Name,
+			GameID:        wishlistItem.ObjectID,
+			Name:          wishlistItem.Name,
 			YearPublished: wishlistItem.YearPublished,
-			ForTrade:     wishlistItem.Status.ForTrade == 1,
-			WantInTrade:  true,
+			ForTrade:      wishlistItem.Status.ForTrade == 1,
+			WantInTrade:   true,
 		})
 	}
 
 	if len(user1HasWanted) == 0 {
 		return TradeOpportunity{
-			User1Username: user1,
-			User2Username: user2,
+			User1Username:  user1,
+			User2Username:  user2,
 			User1HasWanted: []TradeItem{},
-			User2Wishlist: user2Wishlist,
+			User2Wishlist:  user2Wishlist,
 			Summary: TradeSummary{
 				User1HasWantedCount: 0,
-				User2WishlistCount: len(user2Wishlist),
+				User2WishlistCount:  len(user2Wishlist),
 				HasTradeOpportunity: false,
 			},
 		}
@@ -154,15 +154,15 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 
 	summary := TradeSummary{
 		User1HasWantedCount: len(user1HasWanted),
-		User2WishlistCount: len(user2Wishlist),
+		User2WishlistCount:  len(user2Wishlist),
 		HasTradeOpportunity: true,
 	}
 
 	return TradeOpportunity{
-		User1Username: user1,
-		User2Username: user2,
+		User1Username:  user1,
+		User2Username:  user2,
 		User1HasWanted: user1HasWanted,
-		User2Wishlist: user2Wishlist,
+		User2Wishlist:  user2Wishlist,
 		Summary:        summary,
 	}
 }

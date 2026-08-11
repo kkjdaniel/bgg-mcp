@@ -11,28 +11,50 @@ import (
 )
 
 type EssentialGameInfo struct {
-	ID           int      `json:"id"`
-	Name         string   `json:"name"`
-	Description  string   `json:"description"`
-	Year         int      `json:"year"`
-	Complexity   float64  `json:"complexity"`
-	Players      string   `json:"players"`
-	BGGRating    float64  `json:"bgg_rating"`
-	BayesAverage float64  `json:"bayes_average"`
-	PlayTime     string   `json:"play_time"`
-	MinAge       int      `json:"min_age"`
-	Designer     string   `json:"designer"`
-	Publisher    string   `json:"publisher"`
-	Type         string   `json:"type"`
-	Thumbnail    string   `json:"thumbnail"`
-	Image        string   `json:"image"`
-	Categories   []string `json:"categories"`
-	Mechanics    []string `json:"mechanics"`
-	NumRatings   int      `json:"num_ratings"`
-	Owned        int      `json:"owned"`
-	Wishing      int      `json:"wishing"`
-	Trading      int      `json:"trading"`
-	Wanting      int      `json:"wanting"`
+	ID           int         `json:"id"`
+	Name         string      `json:"name"`
+	Description  string      `json:"description"`
+	Year         int         `json:"year"`
+	Complexity   float64     `json:"complexity"`
+	Players      string      `json:"players"`
+	BGGRating    float64     `json:"bgg_rating"`
+	BayesAverage float64     `json:"bayes_average"`
+	PlayTime     string      `json:"play_time"`
+	MinAge       int         `json:"min_age"`
+	Designer     string      `json:"designer"`
+	Publisher    string      `json:"publisher"`
+	Type         string      `json:"type"`
+	Thumbnail    string      `json:"thumbnail"`
+	Image        string      `json:"image"`
+	Categories   []string    `json:"categories"`
+	Mechanics    []string    `json:"mechanics"`
+	NumRatings   int         `json:"num_ratings"`
+	Owned        int         `json:"owned"`
+	Wishing      int         `json:"wishing"`
+	Trading      int         `json:"trading"`
+	Wanting      int         `json:"wanting"`
+	Videos       *GameVideos `json:"videos,omitempty"`
+}
+
+// GameVideos holds the community-submitted videos returned for a game, and the
+// figure BGG publishes beside them.
+type GameVideos struct {
+	// TotalOnBGG is what BGG says it holds for the game. It is routinely far
+	// larger than the number of entries below, so it counts the site's holdings
+	// and never the videos in this response.
+	TotalOnBGG int         `json:"total_on_bgg"`
+	Returned   int         `json:"returned"`
+	Videos     []GameVideo `json:"list"`
+}
+
+// GameVideo is one community-submitted video linked to a game.
+type GameVideo struct {
+	Title    string `json:"title"`
+	Category string `json:"category"`
+	Language string `json:"language"`
+	Link     string `json:"link"`
+	Username string `json:"username"`
+	PostDate string `json:"post_date"`
 }
 
 func extractEssentialInfo(item thing.Item) EssentialGameInfo {
@@ -46,6 +68,8 @@ func extractEssentialInfo(item thing.Item) EssentialGameInfo {
 		Image:       item.Image,
 		MinAge:      item.MinAge.Value,
 	}
+
+	info.Videos = extractVideos(item)
 
 	if item.Statistics != nil && item.Statistics.AverageWeight.Value > 0 {
 		info.Complexity = item.Statistics.AverageWeight.Value
@@ -85,7 +109,7 @@ func extractEssentialInfo(item thing.Item) EssentialGameInfo {
 	var publishers []string
 	var categories []string
 	var mechanics []string
-	
+
 	for _, link := range item.Links {
 		switch link.Type {
 		case "boardgamedesigner":
@@ -98,7 +122,7 @@ func extractEssentialInfo(item thing.Item) EssentialGameInfo {
 			mechanics = append(mechanics, link.Value)
 		}
 	}
-	
+
 	if len(designers) > 0 {
 		info.Designer = strings.Join(designers, ", ")
 	}
@@ -109,6 +133,31 @@ func extractEssentialInfo(item thing.Item) EssentialGameInfo {
 	info.Mechanics = mechanics
 
 	return info
+}
+
+// extractVideos shapes the videos a query made WithVideos brings back. A game
+// queried without that option carries none, which is different from a game BGG
+// holds no video for, so nothing is emitted at all in that case.
+func extractVideos(item thing.Item) *GameVideos {
+	if item.Videos == nil {
+		return nil
+	}
+	list := make([]GameVideo, 0, len(item.Videos.Videos))
+	for _, v := range item.Videos.Videos {
+		list = append(list, GameVideo{
+			Title:    v.Title,
+			Category: v.Category,
+			Language: v.Language,
+			Link:     v.Link,
+			Username: v.Username,
+			PostDate: v.PostDate,
+		})
+	}
+	return &GameVideos{
+		TotalOnBGG: item.Videos.Total,
+		Returned:   len(list),
+		Videos:     list,
+	}
 }
 
 func extractEssentialInfoList(items []thing.Item) []EssentialGameInfo {
@@ -134,30 +183,30 @@ func findBestGameMatch(ctx context.Context, client *gogeek.Client, gameName stri
 			return nil, fmt.Errorf("no games found matching '%s'", gameName)
 		}
 	}
-	
+
 	bestMatch := &searchResults.Items[0]
 	gameNameLower := strings.ToLower(gameName)
-	
+
 	for i := range searchResults.Items {
 		item := &searchResults.Items[i]
 		itemNameLower := strings.ToLower(item.Name.Value)
-		
+
 		if itemNameLower == gameNameLower {
 			return item, nil
 		}
-		
+
 		if bestMatch.Type == "boardgameexpansion" && item.Type == "boardgame" {
 			if strings.Contains(itemNameLower, gameNameLower) || strings.Contains(gameNameLower, itemNameLower) {
 				bestMatch = item
 			}
 		}
-		
+
 		if bestMatch.Type == item.Type {
 			if strings.HasPrefix(itemNameLower, gameNameLower) && !strings.HasPrefix(strings.ToLower(bestMatch.Name.Value), gameNameLower) {
 				bestMatch = item
 			}
 		}
 	}
-	
+
 	return bestMatch, nil
 }

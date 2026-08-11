@@ -25,6 +25,9 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			mcp.Description("Array of BoardGameGeek IDs for fetching multiple games in a single request (maximum 20). Use this instead of 'id' when you need details for more than one game."),
 			mcp.WithNumberItems(),
 		),
+		mcp.WithBoolean("videos",
+			mcp.Description("Include the community-submitted videos BGG links to each game, such as reviews, playthroughs and rules explanations. Off by default, because the list lengthens a response that otherwise carries only essential information. The 'total_on_bgg' figure returned alongside counts what BGG holds for the game and is routinely far larger than the list itself."),
+		),
 	)
 
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -38,11 +41,11 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			if !ok {
 				return mcp.NewToolResultText("Invalid IDs format - must be an array"), nil
 			}
-			
+
 			if len(idsArray) > 20 {
 				return mcp.NewToolResultText("Too many IDs provided. Maximum 20 IDs per request."), nil
 			}
-			
+
 			for _, idVal := range idsArray {
 				var gameID int
 				switch v := idVal.(type) {
@@ -83,7 +86,12 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultText("Either 'name', 'id', or 'ids' parameter must be provided"), nil
 		}
 
-		things, err := thing.Query(ctx, client, gameIDs)
+		var options []thing.Option
+		if withVideos, ok := arguments["videos"].(bool); ok && withVideos {
+			options = append(options, thing.WithVideos())
+		}
+
+		things, err := thing.Query(ctx, client, gameIDs, options...)
 		if err != nil {
 			return mcp.NewToolResultText(err.Error()), nil
 		}

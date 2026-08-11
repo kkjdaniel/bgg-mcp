@@ -106,7 +106,7 @@ func createMCPServer(client *gogeek.Client) *server.MCPServer {
 func main() {
 	var mode string
 	var port string
-	
+
 	flag.StringVar(&mode, "mode", "stdio", "Server mode: stdio or http")
 	flag.StringVar(&port, "port", "8080", "Port for HTTP server (only used in http mode)")
 	flag.Parse()
@@ -114,7 +114,7 @@ func main() {
 	if envMode := os.Getenv("MCP_MODE"); envMode != "" {
 		mode = envMode
 	}
-	
+
 	if envPort := os.Getenv("MCP_PORT"); envPort != "" {
 		port = envPort
 	}
