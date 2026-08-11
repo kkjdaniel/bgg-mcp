@@ -44,7 +44,7 @@ func ThreadDetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Failed to get thread details: %v", err)), nil
 		}
-
+		
 		jsonResult, err := json.MarshalIndent(threadDetail, "", "  ")
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Failed to format result: %v", err)), nil
