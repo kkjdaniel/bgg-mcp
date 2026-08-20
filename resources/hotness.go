@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/hot"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/hot"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -20,7 +20,7 @@ func HotnessResource(client *gogeek.Client) (mcp.Resource, server.ResourceHandle
 	)
 
 	handler := func(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
-		hotItems, err := hot.Query(client, hot.ItemTypeBoardGame)
+		hotItems, err := hot.Query(ctx, client, hot.ItemTypeBoardGame)
 		if err != nil {
 			return nil, fmt.Errorf("error fetching hotness list: %v", err)
 		}

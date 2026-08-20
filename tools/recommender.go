@@ -7,8 +7,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/thing"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/thing"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -42,7 +42,7 @@ func RecommenderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		var err error
 
 		if nameVal, ok := arguments["name"].(string); ok && nameVal != "" {
-			gameDetails, err := searchAndSortGames(client, nameVal, "boardgame", 1)
+			gameDetails, err := searchAndSortGames(ctx, client, nameVal, "boardgame", 1)
 			if err != nil {
 				return mcp.NewToolResultText(fmt.Sprintf("Error finding game by name: %v", err)), nil
 			}
@@ -95,7 +95,7 @@ func RecommenderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultText("No recommendations found"), nil
 		}
 
-		gameDetails, err := thing.Query(client, recommendedIDs)
+		gameDetails, err := thing.Query(ctx, client, recommendedIDs)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error fetching game details: %v", err)), nil
 		}

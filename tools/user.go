@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/user"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/user"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -33,7 +33,7 @@ func UserTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			name = envUsername
 		}
 
-		userDetails, err := user.Query(client, name)
+		userDetails, err := user.Query(ctx, client, name)
 		if err != nil {
 			return mcp.NewToolResultText(err.Error()), nil
 		}

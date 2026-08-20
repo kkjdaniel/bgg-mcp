@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kkjdaniel/gogeek/v2"
-	"github.com/kkjdaniel/gogeek/v2/collection"
+	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/kkjdaniel/gogeek/v3/collection"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -88,7 +88,7 @@ func CollectionTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 
 		options := buildCollectionOptions(arguments)
 
-		result, err := collection.Query(client, username, options...)
+		result, err := collection.Query(ctx, client, username, options...)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error fetching collection: %v", err)), nil
 		}
@@ -108,8 +108,8 @@ func CollectionTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	return tool, handler
 }
 
-func buildCollectionOptions(arguments map[string]interface{}) []collection.CollectionOption {
-	var options []collection.CollectionOption
+func buildCollectionOptions(arguments map[string]interface{}) []collection.Option {
+	var options []collection.Option
 
 	ownershipFilters := []string{"owned", "wishlist", "preordered", "fortrade", "wanttoplay", "wanttobuy"}
 	hasOwnershipFilter := false
@@ -133,7 +133,7 @@ func buildCollectionOptions(arguments map[string]interface{}) []collection.Colle
 		}
 	}
 
-	booleanFilters := map[string]func(bool) collection.CollectionOption{
+	booleanFilters := map[string]func(bool) collection.Option{
 		"owned":      collection.WithOwned,
 		"wishlist":   collection.WithWishlist,
 		"preordered": collection.WithPreordered,
@@ -151,7 +151,7 @@ func buildCollectionOptions(arguments map[string]interface{}) []collection.Colle
 		}
 	}
 
-	numericFilters := map[string]func(float64) collection.CollectionOption{
+	numericFilters := map[string]func(float64) collection.Option{
 		"minrating":    collection.WithMinRating,
 		"maxrating":    collection.WithMaxRating,
 		"minbggrating": collection.WithMinBGGRating,
