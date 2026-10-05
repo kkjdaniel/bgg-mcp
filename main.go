@@ -52,11 +52,11 @@ func createClientFromSessionConfig(apiKey, cookie string) *gogeek.Client {
 	return gogeek.NewClient(gogeek.Auth{})
 }
 
-func createMCPServer(client *gogeek.Client) *server.MCPServer {
+func createMCPServer(client *gogeek.Client, username string) *server.MCPServer {
 	s := server.NewMCPServer(
 		"BGG MCP",
-		"1.6.0",
-		server.WithResourceCapabilities(true, true),
+		"1.7.0",
+		server.WithResourceCapabilities(false, false),
 		server.WithPromptCapabilities(true),
 		server.WithLogging(),
 		server.WithRecovery(),
@@ -65,13 +65,13 @@ func createMCPServer(client *gogeek.Client) *server.MCPServer {
 	detailsTool, detailsHandler := tools.DetailsTool(client)
 	s.AddTool(detailsTool, detailsHandler)
 
-	collectionTool, collectionHandler := tools.CollectionTool(client)
+	collectionTool, collectionHandler := tools.CollectionTool(client, username)
 	s.AddTool(collectionTool, collectionHandler)
 
 	hotnessTool, hotnessHandler := tools.HotnessTool(client)
 	s.AddTool(hotnessTool, hotnessHandler)
 
-	userTool, userHandler := tools.UserTool(client)
+	userTool, userHandler := tools.UserTool(client, username)
 	s.AddTool(userTool, userHandler)
 
 	searchTool, searchHandler := tools.SearchTool(client)
@@ -80,7 +80,7 @@ func createMCPServer(client *gogeek.Client) *server.MCPServer {
 	priceTool, priceHandler := tools.PriceTool()
 	s.AddTool(priceTool, priceHandler)
 
-	tradeFinderTool, tradeFinderHandler := tools.TradeFinderTool(client)
+	tradeFinderTool, tradeFinderHandler := tools.TradeFinderTool(client, username)
 	s.AddTool(tradeFinderTool, tradeFinderHandler)
 
 	recommenderTool, recommenderHandler := tools.RecommenderTool(client)
@@ -95,10 +95,21 @@ func createMCPServer(client *gogeek.Client) *server.MCPServer {
 	hotnessResource, hotnessResourceHandler := resources.HotnessResource(client)
 	s.AddResource(hotnessResource, hotnessResourceHandler)
 
-	myCollectionResource, myCollectionResourceHandler := resources.MyCollectionResource(client)
-	s.AddResource(myCollectionResource, myCollectionResourceHandler)
+	if username != "" {
+		myCollectionResource, myCollectionResourceHandler := resources.MyCollectionResource(client, username)
+		s.AddResource(myCollectionResource, myCollectionResourceHandler)
+	}
 
-	prompts.RegisterPrompts(s)
+	userCollectionTemplate, userCollectionTemplateHandler := resources.UserCollectionTemplate(client)
+	s.AddResourceTemplate(userCollectionTemplate, userCollectionTemplateHandler)
+
+	gameTemplate, gameTemplateHandler := resources.GameTemplate(client)
+	s.AddResourceTemplate(gameTemplate, gameTemplateHandler)
+
+	threadTemplate, threadTemplateHandler := resources.ThreadTemplate(client)
+	s.AddResourceTemplate(threadTemplate, threadTemplateHandler)
+
+	prompts.RegisterPrompts(s, username)
 
 	return s
 }
@@ -124,7 +135,7 @@ func main() {
 		runHTTPServer(port)
 	case "stdio":
 		client := initializeGoGeekClient()
-		mcpServer := createMCPServer(client)
+		mcpServer := createMCPServer(client, os.Getenv("BGG_USERNAME"))
 		runStdioServer(mcpServer)
 	default:
 		log.Fatalf("Invalid mode: %s. Use 'stdio' or 'http'", mode)
@@ -182,13 +193,11 @@ func runHTTPServer(port string) {
 			sessionClient = createClientFromEnv()
 		}
 
-		originalUsername := os.Getenv("BGG_USERNAME")
-		if username != "" {
-			os.Setenv("BGG_USERNAME", username)
-			defer os.Setenv("BGG_USERNAME", originalUsername)
+		if username == "" {
+			username = os.Getenv("BGG_USERNAME")
 		}
 
-		sessionMCPServer := createMCPServer(sessionClient)
+		sessionMCPServer := createMCPServer(sessionClient, username)
 
 		httpServer := server.NewStreamableHTTPServer(sessionMCPServer,
 			server.WithEndpointPath("/mcp"),

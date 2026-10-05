@@ -7,14 +7,13 @@ import (
 	"strconv"
 
 	"github.com/kkjdaniel/gogeek/v3"
-	"github.com/kkjdaniel/gogeek/v3/thread"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
 func ThreadDetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-thread-details",
-		mcp.WithDescription("Get full content of a specific BoardGameGeek forum thread, including all posts and replies. Use this after finding relevant threads with bgg-rules."),
+		mcp.WithDescription("Get the full content of a specific BoardGameGeek forum thread, with every post as plain text. Use this to read a thread found with bgg-rules."),
 		mcp.WithNumber("thread_id",
 			mcp.Required(),
 			mcp.Description("The BoardGameGeek thread ID to fetch"),
@@ -40,12 +39,12 @@ func ThreadDetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc)
 		} else {
 			return mcp.NewToolResultText("thread_id parameter is required"), nil
 		}
-		threadDetail, err := thread.Query(ctx, client, threadID)
+		result, err := FetchThread(ctx, client, threadID)
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Failed to get thread details: %v", err)), nil
 		}
-		
-		jsonResult, err := json.MarshalIndent(threadDetail, "", "  ")
+
+		jsonResult, err := json.MarshalIndent(result, "", "  ")
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Failed to format result: %v", err)), nil
 		}

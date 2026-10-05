@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/kkjdaniel/gogeek/v3"
 	"github.com/kkjdaniel/gogeek/v3/collection"
@@ -42,7 +41,7 @@ type TradeSummary struct {
 	HasTradeOpportunity bool `json:"has_trade_opportunity"`
 }
 
-func TradeFinderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
+func TradeFinderTool(client *gogeek.Client, selfUsername string) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-trade-finder",
 		mcp.WithDescription("Find what games user1 owns that user2 has on their wishlist. Shows potential trading opportunities."),
 		mcp.WithString("user1",
@@ -64,11 +63,10 @@ func TradeFinderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		}
 
 		if user1 == "SELF" {
-			envUsername := os.Getenv("BGG_USERNAME")
-			if envUsername == "" {
-				return mcp.NewToolResultText("BGG_USERNAME environment variable not set. Either set it or provide your specific username instead of 'SELF'."), nil
+			if selfUsername == "" {
+				return mcp.NewToolResultText(selfUsernameMissingMessage), nil
 			}
-			user1 = envUsername
+			user1 = selfUsername
 		}
 
 		user2, ok := arguments["user2"].(string)
@@ -77,11 +75,10 @@ func TradeFinderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		}
 
 		if user2 == "SELF" {
-			envUsername := os.Getenv("BGG_USERNAME")
-			if envUsername == "" {
-				return mcp.NewToolResultText("BGG_USERNAME environment variable not set. Either set it or provide your specific username instead of 'SELF'."), nil
+			if selfUsername == "" {
+				return mcp.NewToolResultText(selfUsernameMissingMessage), nil
 			}
-			user2 = envUsername
+			user2 = selfUsername
 		}
 
 		user1Collection, err := collection.Query(ctx, client, user1, collection.WithOwned(true))

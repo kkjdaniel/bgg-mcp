@@ -1,16 +1,12 @@
-<p align="center">
-  <img src="images/bgg-mcp-logo.png" width="200" alt="BGG MCP Logo">
-</p>
-<h1 align="center">BGG MCP: BoardGameGeek MCP Server</h1>
+<a href="https://github.com/kkjdaniel/bgg-mcp"><img src="images/readme-banner.png" alt="BGG MCP: BoardGameGeek data for your AI assistant" width="100%"></a>
 
-<p align="center">
-  <a href="https://archestra.ai/mcp-catalog/kkjdaniel__bgg-mcp"><img src="https://archestra.ai/mcp-catalog/api/badge/quality/kkjdaniel/bgg-mcp" alt="trust score badge"></a>
-  <a href="https://github.com/modelcontextprotocol/registry"><img src="https://img.shields.io/badge/MCP_Registry-BGG_MCP-green" alt="MCP Registry"></a>
-  <br>
-  <a href="https://go.dev/"><img src="https://img.shields.io/github/go-mod/go-version/kkjdaniel/bgg-mcp" alt="Go Version"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/kkjdaniel/bgg-mcp" alt="License"></a>
-  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Protocol-blue" alt="MCP Protocol"></a>
-</p>
+An MCP server that gives AI assistants access to BoardGameGeek: game details, collections, prices, recommendations and rules answers.
+
+[![Trust score](https://archestra.ai/mcp-catalog/api/badge/quality/kkjdaniel/bgg-mcp)](https://archestra.ai/mcp-catalog/kkjdaniel__bgg-mcp)
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-BGG_MCP-green)](https://github.com/modelcontextprotocol/registry)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/kkjdaniel/bgg-mcp)](https://go.dev/)
+[![License](https://img.shields.io/github/license/kkjdaniel/bgg-mcp)](LICENSE.md)
+[![MCP Protocol](https://img.shields.io/badge/MCP-Protocol-blue)](https://modelcontextprotocol.io)
 
 BGG MCP provides access to the BoardGameGeek API through the [Model Context Protocol](https://www.anthropic.com/news/model-context-protocol), enabling retrieval and filtering of board game data, user collections, and profiles. The server is implemented in Go, using the [GoGeek](https://github.com/kkjdaniel/gogeek) library, which helps ensure robust API interactions.
 
@@ -34,43 +30,42 @@ Game recommendations are powered by [Recommend.Games](https://recommend.games/),
 
 ## Tools
 
-### Core Tools
-
-| Tool                 | Description                                                                 |
-| -------------------- | --------------------------------------------------------------------------- |
-| `bgg-search`         | Search for board games with type filtering (base games, expansions, or all) |
-| `bgg-details`        | Get detailed information about a specific board game                        |
-| `bgg-collection`     | Query and filter a user's game collection with extensive filtering options  |
-| `bgg-hot`            | Get the current BGG hotness list                                            |
-| `bgg-user`           | Get user profile information                                                |
-| `bgg-price`          | Get current prices from multiple retailers using BGG IDs                    |
-| `bgg-trade-finder`   | Find trading opportunities between two BGG users                            |
-| `bgg-recommender`    | Get game recommendations based on similarity to a specific game             |
-| `bgg-thread-details` | Get the full content of a specific BGG forum thread including all posts     |
-
-### 🧪 Experimental Tools
-
-| Tool        | Description                                                                                |
-| ----------- | ------------------------------------------------------------------------------------------ |
-| `bgg-rules` | Answer rules questions by searching BGG forums for relevant discussions and clarifications |
+| Tool                 | Description                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------- |
+| `bgg-search`         | Search for board games with type filtering (base games, expansions, or all)             |
+| `bgg-details`        | Get detailed information about a specific board game                                    |
+| `bgg-collection`     | Query and filter a user's game collection with extensive filtering options              |
+| `bgg-hot`            | Get the current BGG hotness list                                                        |
+| `bgg-user`           | Get user profile information                                                            |
+| `bgg-price`          | Get current prices from multiple retailers using BGG IDs                                |
+| `bgg-trade-finder`   | Find trading opportunities between two BGG users                                        |
+| `bgg-recommender`    | Get game recommendations based on similarity to a specific game                         |
+| `bgg-rules`          | Answer rules questions by finding the most relevant threads in a game's BGG rules forum |
+| `bgg-thread-details` | Get the full content of a specific BGG forum thread including all posts                 |
 
 ## Resources
 
 BGG MCP exposes resources that AI assistants can access directly for contextual information:
 
-| Resource            | URI                   | Description                                                      |
-| ------------------- | --------------------- | ---------------------------------------------------------------- |
-| `BGG Hotness`       | `bgg://hotness`       | Current BGG hotness list, always available                       |
-| `My BGG Collection` | `bgg://my-collection` | Your personal BGG collection (requires `BGG_USERNAME` to be set) |
+| Resource              | URI                           | Description                                                              |
+| --------------------- | ----------------------------- | ------------------------------------------------------------------------ |
+| `BGG Hotness`         | `bgg://hotness`               | Current BGG hotness list, always available                               |
+| `My BGG Collection`   | `bgg://my-collection`         | Your personal BGG collection (only listed when `BGG_USERNAME` is set)    |
+| `BGG User Collection` | `bgg://collection/{username}` | The owned games in any BGG user's collection                             |
+| `BGG Game`            | `bgg://game/{id}`             | Essential information about a game by its BGG ID                         |
+| `BGG Forum Thread`    | `bgg://thread/{id}`           | A BGG forum thread by its ID, with every post as plain text              |
 
 ## Prompts
 
 BGG MCP includes pre-configured prompts for common workflows:
 
-| Prompt                   | Description                                                                          |
-| ------------------------ | ------------------------------------------------------------------------------------ |
-| `Trade Sales Post`       | Generate a formatted sales post for your BGG 'for trade' collection with discounted market prices |
-| `Game Recommendations`   | Get personalized game recommendations based on your BGG collection and preferences   |
+| Prompt                 | Arguments                                                    | Description                                                                              |
+| ---------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `trade-sales-post`     | `username`, `currency`, `destination`, `discount`, `platform` | Generate a sales post for your BGG 'for trade' collection, discounted from retail prices |
+| `game-recommendations` | `username`, `currency`, `destination`                        | Get personalized game recommendations based on your BGG collection and preferences       |
+| `rules-question`       | `game`, `question`                                           | Answer a rules question from the game's BGG rules forum                                  |
+
+`username` is optional on both prompts when `BGG_USERNAME` is set.
 
 ## Example Prompts
 
@@ -135,16 +130,14 @@ Here are some example prompts you can use to interact with the BGG MCP tools:
 "Find 5 games similar to Troyes"
 ```
 
-### 📖 Rules (Experimental)
+### 📖 Rules
 
 ```
-"[Your rules question about any board game] - use bgg-rules"
-"How does [game mechanic] work in [game name]? use bgg-rules"
-"Can I [specific action] in [game name]? use bgg-rules"
-"What happens when [situation] in [game name]? use bgg-rules"
+"In Wingspan, do pink powers trigger on my own turn?"
+"Can I trade with the bank during another player's turn in Catan?"
+"What happens when the deck runs out in Ark Nova?"
+"How does line of sight work in Gloomhaven?"
 ```
-
-Note: Include "use bgg-rules" in your question to ensure the AI searches BGG forums for answers.
 
 ## Installation
 

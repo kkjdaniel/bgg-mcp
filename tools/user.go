@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/kkjdaniel/gogeek/v3"
 	"github.com/kkjdaniel/gogeek/v3/user"
@@ -12,7 +11,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func UserTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
+func UserTool(client *gogeek.Client, selfUsername string) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-user",
 		mcp.WithDescription("Find details about a specific user on BoardGameGeek (BGG)"),
 		mcp.WithString("username",
@@ -26,11 +25,10 @@ func UserTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		name := arguments["username"].(string)
 
 		if name == "SELF" {
-			envUsername := os.Getenv("BGG_USERNAME")
-			if envUsername == "" {
-				return mcp.NewToolResultText("BGG_USERNAME environment variable not set. Either set it or provide your specific username instead of 'SELF'."), nil
+			if selfUsername == "" {
+				return mcp.NewToolResultText(selfUsernameMissingMessage), nil
 			}
-			name = envUsername
+			name = selfUsername
 		}
 
 		userDetails, err := user.Query(ctx, client, name)

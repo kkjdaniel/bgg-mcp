@@ -10,6 +10,8 @@ import (
 	"github.com/kkjdaniel/gogeek/v3/thing"
 )
 
+const selfUsernameMissingMessage = "BGG_USERNAME is not set. Either set it or provide your specific username instead of 'SELF'."
+
 type EssentialGameInfo struct {
 	ID           int         `json:"id"`
 	Name         string      `json:"name"`
@@ -209,4 +211,18 @@ func findBestGameMatch(ctx context.Context, client *gogeek.Client, gameName stri
 	}
 
 	return bestMatch, nil
+}
+
+// FetchGameInfo returns the essential information for a single game by its BGG ID.
+func FetchGameInfo(ctx context.Context, client *gogeek.Client, gameID int) (*EssentialGameInfo, error) {
+	things, err := thing.Query(ctx, client, []int{gameID})
+	if err != nil {
+		return nil, err
+	}
+	if len(things.Items) == 0 {
+		return nil, fmt.Errorf("no game found with ID %d", gameID)
+	}
+
+	info := extractEssentialInfo(things.Items[0])
+	return &info, nil
 }

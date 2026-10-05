@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/kkjdaniel/gogeek/v3"
 	"github.com/kkjdaniel/gogeek/v3/collection"
@@ -12,7 +11,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func CollectionTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
+func CollectionTool(client *gogeek.Client, selfUsername string) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-collection",
 		mcp.WithDescription("Query a user's board game collection on BoardGameGeek (BGG). Returns all matching games by default with basic info (name, ID, rating, plays, status). Use the filter parameters to narrow results (e.g. owned, wishlist, rated, play count). For detailed information about specific games (description, mechanics, player count, complexity, etc.), follow up with bgg-details using the game IDs from the results."),
 		mcp.WithString("username",
@@ -79,11 +78,10 @@ func CollectionTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		}
 
 		if username == "SELF" {
-			envUsername := os.Getenv("BGG_USERNAME")
-			if envUsername == "" {
-				return mcp.NewToolResultText("BGG_USERNAME environment variable not set. Either set it or provide your specific username instead of 'SELF'."), nil
+			if selfUsername == "" {
+				return mcp.NewToolResultText(selfUsernameMissingMessage), nil
 			}
-			username = envUsername
+			username = selfUsername
 		}
 
 		options := buildCollectionOptions(arguments)
