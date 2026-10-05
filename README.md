@@ -150,7 +150,7 @@ BGG MCP is published to [Docker Hub](https://hub.docker.com/r/kdaniel/bgg-mcp) a
 ```json
 "bgg": {
     "command": "docker",
-    "args": ["run", "-i", "--rm",
+    "args": ["run", "-i", "--rm", "--pull=always",
         "-e", "BGG_API_KEY",
         "-e", "BGG_USERNAME",
         "kdaniel/bgg-mcp"
@@ -163,6 +163,8 @@ BGG MCP is published to [Docker Hub](https://hub.docker.com/r/kdaniel/bgg-mcp) a
 ```
 
 > See [Configuration](#configuration) below for details on obtaining a BGG API key and setting up your username.
+
+`--pull=always` fetches the newest image each time the server starts, so you stay up to date automatically. Remove it if you need to start the server offline.
 
 For more details on connecting MCP servers to your client, see the [official MCP guide](https://modelcontextprotocol.io/docs/develop/connect-local-servers).
 
