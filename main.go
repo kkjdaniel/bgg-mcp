@@ -63,7 +63,7 @@ const serverInstructions = `BoardGameGeek (BGG) asks that answers using its data
 func createMCPServer(client *gogeek.Client, username string) *server.MCPServer {
 	s := server.NewMCPServer(
 		"BGG MCP",
-		"1.7.0",
+		"1.8.0",
 		server.WithInstructions(serverInstructions),
 		server.WithResourceCapabilities(false, false),
 		server.WithPromptCapabilities(true),
