@@ -135,11 +135,14 @@ Here are some example prompts you can use to interact with the BGG MCP tools:
 
 ### 📖 Rules
 
+> [!TIP]
+> Assistants often answer rules questions from memory. Mention BGG and make it clear you mean a board game so the rules forum gets searched, or use the `rules-question` prompt.
+
 ```
-"In Wingspan, do pink powers trigger on my own turn?"
-"Can I trade with the bank during another player's turn in Catan?"
-"What happens when the deck runs out in Ark Nova?"
-"How does line of sight work in Gloomhaven?"
+"Check BGG, in Wingspan do pink powers trigger on my own turn?"
+"What does the BGG rules forum say about trading with the bank during another player's turn in Catan?"
+"In the board game Root, can the Vagabond attack a player it is allied with? Check BGG"
+"Search BGG for how line of sight works in Gloomhaven"
 ```
 
 ## Installation
