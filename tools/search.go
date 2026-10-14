@@ -95,6 +95,7 @@ func searchAndSortGames(ctx context.Context, client *gogeek.Client, query, typeF
 		}
 	}
 
+	baseGameCount := 0
 	if len(exactMatches) > 0 {
 		filteredItems = exactMatches
 	} else {
@@ -120,11 +121,18 @@ func searchAndSortGames(ctx context.Context, client *gogeek.Client, query, typeF
 			}
 		}
 
+		baseGameCount = len(baseGames)
 		filteredItems = append(baseGames, expansions...)
 	}
 
+	// Base games named after the query (such as Catan, for "catan") rank ahead
+	// of the rest, and the sort by votes below orders each group on its own.
+	baseGameIDs := map[int]bool{}
 	gameIDs := make([]int, 0, len(filteredItems))
-	for _, item := range filteredItems {
+	for i, item := range filteredItems {
+		if i < baseGameCount {
+			baseGameIDs[item.ID] = true
+		}
 		gameIDs = append(gameIDs, item.ID)
 	}
 
@@ -148,7 +156,13 @@ func searchAndSortGames(ctx context.Context, client *gogeek.Client, query, typeF
 
 	gameDetails := &thing.Items{Items: allItems}
 
-	sort.Slice(gameDetails.Items, func(i, j int) bool {
+	sort.SliceStable(gameDetails.Items, func(i, j int) bool {
+		baseI := baseGameIDs[gameDetails.Items[i].ID]
+		baseJ := baseGameIDs[gameDetails.Items[j].ID]
+		if baseI != baseJ {
+			return baseI
+		}
+
 		votesI := 0
 		votesJ := 0
 

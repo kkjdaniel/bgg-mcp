@@ -33,8 +33,8 @@ Game recommendations are powered by [Recommend.Games](https://recommend.games/),
 | Tool                 | Description                                                                             |
 | -------------------- | --------------------------------------------------------------------------------------- |
 | `bgg-search`         | Search for board games with type filtering (base games, expansions, or all)             |
-| `bgg-details`        | Get detailed information about a specific board game                                    |
-| `bgg-collection`     | Query and filter a user's game collection with extensive filtering options              |
+| `bgg-details`        | Get game details, including best player counts, rank, and optional marketplace listings, editions and user comments |
+| `bgg-collection`     | Query and filter a user's collection, with their ratings, BGG ratings, rank and plays   |
 | `bgg-hot`            | Get the current BGG hotness list                                                        |
 | `bgg-user`           | Get user profile information                                                            |
 | `bgg-price`          | Get current prices from multiple retailers using BGG IDs                                |
@@ -88,6 +88,8 @@ Here are some example prompts you can use to interact with the BGG MCP tools:
 "Get details for Azul"
 "Show me information about game ID 224517"
 "What's the BGG rating for Gloomhaven?"
+"What is Ark Nova selling for on the BGG marketplace?"
+"What expansions does Wingspan have?"
 ```
 
 ### 📚 Collection
@@ -100,6 +102,7 @@ Here are some example prompts you can use to interact with the BGG MCP tools:
 "Show me all the games rated 3 and below in my collection"
 "What games in my collection does rahdo want?"
 "What games does kkjdaniel have that I want?"
+"Which games in my collection play best at 2 players?"
 ```
 
 ### 🔥 Hotness
@@ -256,7 +259,11 @@ Alternatively, you can use cookie-based authentication:
 
 ### Username Configuration
 
-You can optionally set the `BGG_USERNAME` environment variable to enable "me" and "my" references in queries without needing to explicitly state your username:
+You can optionally set your BGG username to enable "me" and "my" references in queries without needing to explicitly state your username.
+
+If you installed the [Claude Desktop Extension](#a-claude-desktop-extension-macos--windows), enter your username in the extension's settings in Claude Desktop (Settings > Extensions > BGG MCP), where you also set your API key. There is no config file to edit.
+
+For Docker or a manual setup, set the `BGG_USERNAME` environment variable:
 
 ```json
 "bgg": {
@@ -273,4 +280,8 @@ This enables:
 - **User queries**: "Show my BGG profile"
 - **AI assistance**: The AI can automatically use your username for comparisons and analysis
 
-**Note**: When you use self-references (me, my, I) without setting BGG_USERNAME, you'll get a clear error message.
+**Note**: When you use self-references (me, my, I) without setting your username, you'll get a clear error message.
+
+### Update Notifications
+
+When it runs on your machine, BGG MCP checks GitHub once a day for a newer release. If there is one, the assistant mentions it once per conversation with a link to the release. Set `BGG_DISABLE_UPDATE_CHECK` to `true` to turn this off. The server never checks when it runs in HTTP mode.

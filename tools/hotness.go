@@ -44,7 +44,7 @@ func FetchHotGames(ctx context.Context, client *gogeek.Client) ([]HotGame, error
 
 func HotnessTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-hot",
-		mcp.WithDescription("Find the current trending board game hotness on BoardGameGeek (BGG)"),
+		mcp.WithDescription("Find the current trending board game hotness on BoardGameGeek (BGG). Returns each game's hotness rank, name, year and link only; for ratings, player counts, complexity or what a game is about, follow up with bgg-details using 'ids' (up to 20 at a time)."),
 	)
 
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {

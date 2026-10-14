@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/kkjdaniel/gogeek/v3"
 	"github.com/kkjdaniel/gogeek/v3/collection"
@@ -46,7 +47,7 @@ type TradeSummary struct {
 
 func TradeFinderTool(client *gogeek.Client, selfUsername string) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-trade-finder",
-		mcp.WithDescription("Find what games user1 owns that user2 has on their wishlist. Shows potential trading opportunities."),
+		mcp.WithDescription("Find what games user1 owns that user2 has on their wishlist. Shows potential trading opportunities, with each game's BGG rating and the owner's own rating ('user_rating': user1's for games they own, user2's for their wishlist)."),
 		mcp.WithString("user1",
 			mcp.Required(),
 			mcp.Description("BGG username whose collection will be checked. When the user refers to themselves (me, my, I), use 'SELF' as the value."),
@@ -84,12 +85,13 @@ func TradeFinderTool(client *gogeek.Client, selfUsername string) (mcp.Tool, serv
 			user2 = selfUsername
 		}
 
-		user1Collection, err := collection.Query(ctx, client, user1, collection.WithOwned(true))
+		// Stats carry each user's own rating and the BGG rating of every game.
+		user1Collection, err := collection.Query(ctx, client, user1, collection.WithOwned(true), collection.WithStats())
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error fetching %s's collection: %v", user1, err)), nil
 		}
 
-		user2Wishlist, err := collection.Query(ctx, client, user2, collection.WithWishlist(true))
+		user2Wishlist, err := collection.Query(ctx, client, user2, collection.WithWishlist(true), collection.WithStats())
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error fetching %s's wishlist: %v", user2, err)), nil
 		}
@@ -125,6 +127,8 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 				YearPublished: user1Item.YearPublished,
 				ForTrade:     user1Item.Status.ForTrade == 1,
 				WantInTrade:  user1Item.Status.Want == 1,
+				UserRating:   ownRating(user1Item),
+				BGGRating:    bggRating(user1Item),
 			})
 		}
 	}
@@ -137,6 +141,8 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 			YearPublished: wishlistItem.YearPublished,
 			ForTrade:     wishlistItem.Status.ForTrade == 1,
 			WantInTrade:  true,
+			UserRating:   ownRating(wishlistItem),
+			BGGRating:    bggRating(wishlistItem),
 		})
 	}
 
@@ -171,4 +177,23 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 		User2Wishlist: user2Wishlist,
 		Summary:        summary,
 	}
+}
+
+// ownRating is the rating the collection's owner gave a game, or 0 when they
+// haven't rated it.
+func ownRating(item collection.CollectionItem) float64 {
+	if item.Stats == nil {
+		return 0
+	}
+	rating, _ := strconv.ParseFloat(item.Stats.Rating.Value, 64)
+	return rating
+}
+
+// bggRating is a game's average rating on BGG, or 0 when it has none.
+func bggRating(item collection.CollectionItem) float64 {
+	if item.Stats == nil {
+		return 0
+	}
+	rating, _ := strconv.ParseFloat(item.Stats.Rating.Average.Value, 64)
+	return rating
 }

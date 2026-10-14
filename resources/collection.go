@@ -13,7 +13,7 @@ import (
 )
 
 func ownedCollectionContents(ctx context.Context, client *gogeek.Client, uri string, username string) ([]mcp.ResourceContents, error) {
-	result, err := collection.Query(ctx, client, username, collection.WithOwned(true))
+	result, err := collection.Query(ctx, client, username, collection.WithOwned(true), collection.WithStats())
 	if err != nil {
 		return nil, fmt.Errorf("error fetching collection: %v", err)
 	}

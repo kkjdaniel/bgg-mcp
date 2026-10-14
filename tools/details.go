@@ -12,9 +12,13 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
+// commentsPageSize is how many comments the comments option fetches per game:
+// enough to get a sense of opinion without swamping the response.
+const commentsPageSize = 50
+
 func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-details",
-		mcp.WithDescription("Get detailed information about board games on BoardGameGeek (BGG) including description, mechanics, categories, player count, playtime, complexity, and ratings. Use this tool to deep dive into games found via other tools (e.g. after getting collection results or search results that only return basic info). Use 'name' for a single game lookup by name, 'id' for a single game lookup by BGG ID, or 'ids' to fetch multiple games at once (up to 20). Only provide one of these parameters."),
+		mcp.WithDescription("Get detailed information about board games on BoardGameGeek (BGG) including description, mechanics, categories, player count, the player counts the BGG community votes best and recommended ('best_players', 'recommended_players'), playtime, complexity, ratings, BGG rank, language dependence, and links between expansions and base games ('expands'; a single-game lookup also lists the game's 'expansions'). Use this tool to deep dive into games found via other tools (e.g. after getting collection results or search results that only return basic info). Use 'name' for a single game lookup by name, 'id' for a single game lookup by BGG ID, or 'ids' to fetch multiple games at once (up to 20). Only provide one of these parameters."),
 		mcp.WithString("name",
 			mcp.Description("The name of the board game to look up. Use this when you only have the game's name."),
 		),
@@ -27,6 +31,15 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		),
 		mcp.WithBoolean("videos",
 			mcp.Description("Include the community-submitted videos BGG links to each game, such as reviews, playthroughs and rules explanations. Off by default, because the list lengthens a response that otherwise carries only essential information. The 'total_on_bgg' figure returned alongside counts what BGG holds for the game and is routinely far larger than the list itself."),
+		),
+		mcp.WithBoolean("comments",
+			mcp.Description(fmt.Sprintf("Include a page of the comments BGG users have left on each game, with the rating each gave it. Use this for what players think of a game. Off by default; up to %d comments per game, and 'total_on_bgg' counts every comment BGG holds.", commentsPageSize)),
+		),
+		mcp.WithBoolean("marketplace",
+			mcp.Description("Include the copies of each game for sale on the BGG marketplace, with price, currency, condition and a link to each listing. Use this for what a game sells for second-hand. Off by default."),
+		),
+		mcp.WithBoolean("versions",
+			mcp.Description("Include each game's published editions (printings and localisations) with their year, publishers and languages. Use this for questions about editions or which language versions exist. Off by default, because a long-lived game can have hundreds."),
 		),
 	)
 
@@ -90,6 +103,28 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		if withVideos, ok := arguments["videos"].(bool); ok && withVideos {
 			options = append(options, thing.WithVideos())
 		}
+		withComments, _ := arguments["comments"].(bool)
+		if withComments {
+			options = append(options, thing.WithComments(), thing.WithPageSize(commentsPageSize))
+		}
+		withMarketplace, _ := arguments["marketplace"].(bool)
+		if withMarketplace {
+			options = append(options, thing.WithMarketplace())
+		}
+		withVersions, _ := arguments["versions"].(bool)
+		if withVersions {
+			options = append(options, thing.WithVersions())
+		}
+		// A game nobody sells, or with no editions listed, looks the same as one
+		// queried without the option, so say so rather than leave the field out.
+		markEmpty := func(info *EssentialGameInfo) {
+			if withMarketplace && info.Marketplace == nil {
+				info.Marketplace = &GameMarketplace{Listings: []MarketplaceListing{}}
+			}
+			if withVersions && info.Versions == nil {
+				info.Versions = &GameVersions{Versions: []GameVersion{}}
+			}
+		}
 
 		things, err := thing.Query(ctx, client, gameIDs, options...)
 		if err != nil {
@@ -102,9 +137,13 @@ func DetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 
 			if len(gameIDs) == 1 {
 				essentialInfo := extractEssentialInfo(things.Items[0])
+				markEmpty(&essentialInfo)
 				out, err = json.Marshal(essentialInfo)
 			} else {
 				essentialInfo := extractEssentialInfoList(things.Items)
+				for i := range essentialInfo {
+					markEmpty(&essentialInfo[i])
+				}
 				out, err = json.Marshal(essentialInfo)
 			}
 

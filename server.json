@@ -27,6 +27,10 @@
         {
           "name": "BGG_USERNAME",
           "description": "Your BoardGameGeek username for references such as ME or MY in prompts"
+        },
+        {
+          "name": "BGG_DISABLE_UPDATE_CHECK",
+          "description": "Set to true to stop the server checking GitHub for a newer release"
         }
       ]
     }

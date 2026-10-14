@@ -74,8 +74,8 @@ func TestNewCollectionResultLinks(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(out), `"Name":"Catan"`) || !strings.Contains(string(out), `"link":"https://boardgamegeek.com/boardgame/13"`) {
-		t.Errorf("collection item should keep its fields and add a link, got %s", out)
+	if !strings.Contains(string(out), `"name":"Catan"`) || !strings.Contains(string(out), `"link":"https://boardgamegeek.com/boardgame/13"`) {
+		t.Errorf("collection item should carry its name and link, got %s", out)
 	}
 
 	empty, err := json.Marshal(NewCollectionResult("someone", nil))

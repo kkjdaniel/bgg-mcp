@@ -8,12 +8,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
 	"github.com/kkjdaniel/bgg-mcp/prompts"
 	"github.com/kkjdaniel/bgg-mcp/resources"
 	"github.com/kkjdaniel/bgg-mcp/tools"
+	"github.com/kkjdaniel/bgg-mcp/update"
 	"github.com/kkjdaniel/gogeek/v3"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -52,24 +54,42 @@ func createClientFromSessionConfig(apiKey, cookie string) *gogeek.Client {
 	return gogeek.NewClient(gogeek.Auth{})
 }
 
+// serverVersion is the version the server reports, and the one the update check
+// compares with the latest GitHub release.
+const serverVersion = "1.8.0"
+
 // serverInstructions asks the model to show users the boardgamegeek.com links
-// that come with BGG data, which BoardGameGeek asks of answers that use it.
+// that come with BGG data, which BoardGameGeek asks of answers that use it, and
+// to lay answers out so that long lists of games stay easy to read.
 const serverInstructions = `BoardGameGeek (BGG) asks that answers using its data link back to boardgamegeek.com, so always show the user the links that come with this server's results:
 
 - Games, designers, publishers, categories, mechanics, users, guilds and forum threads in the results carry a "link" (or a field ending in "_link") to their BGG page. When your answer names one of them, put its link on the name as a Markdown link, such as [Brass: Birmingham](https://boardgamegeek.com/boardgame/224517), rather than showing a bare URL.
 - When your answer uses BGG data without naming anything that has a link, such as how many games a collection holds, link the page the data came from (such as the "collection_link" of a collection), or else https://boardgamegeek.com.
-- Use the links exactly as the results give them rather than writing BGG URLs from memory.`
+- Use the links exactly as the results give them rather than writing BGG URLs from memory.
 
-func createMCPServer(client *gogeek.Client, username string) *server.MCPServer {
-	s := server.NewMCPServer(
-		"BGG MCP",
-		"1.8.0",
+Lay answers out to be scanned rather than read as prose:
+
+- Start with a one-line answer, such as how many games matched, then give the detail.
+- Never run more than a few games together in a sentence or a comma-separated paragraph.
+- For a broad list, such as every game in a collection that matches, use a Markdown table with one row per game and a column for each figure the question turns on, such as the personal rating, best player counts or play time. Bullets suit a handful of games at most.
+- When a list runs long, split it into tables under short headings by whatever answers the question, such as rating, best player count, or base games and expansions.
+- For a single game, put its key figures (such as players, best player count, play time, complexity, rating and rank) in a compact table rather than a paragraph. Lay out marketplace listings and editions as tables too.
+- Answer from the figures in the results, such as "best_players" for which games play best at a player count, rather than from memory. Keep caveats to a short line at the end, and only include ones that change how the answer should be read.`
+
+// createMCPServer builds the server. updates adds a notice to tool results while
+// a newer release is out, and is nil when nothing should be added.
+func createMCPServer(client *gogeek.Client, username string, updates *update.Checker) *server.MCPServer {
+	options := []server.ServerOption{
 		server.WithInstructions(serverInstructions),
 		server.WithResourceCapabilities(false, false),
 		server.WithPromptCapabilities(true),
 		server.WithLogging(),
 		server.WithRecovery(),
-	)
+	}
+	if updates != nil {
+		options = append(options, server.WithToolHandlerMiddleware(updates.Middleware))
+	}
+	s := server.NewMCPServer("BGG MCP", serverVersion, options...)
 
 	detailsTool, detailsHandler := tools.DetailsTool(client)
 	s.AddTool(detailsTool, detailsHandler)
@@ -144,11 +164,23 @@ func main() {
 		runHTTPServer(port)
 	case "stdio":
 		client := initializeGoGeekClient()
-		mcpServer := createMCPServer(client, os.Getenv("BGG_USERNAME"))
+		mcpServer := createMCPServer(client, os.Getenv("BGG_USERNAME"), startUpdateCheck())
 		runStdioServer(mcpServer)
 	default:
 		log.Fatalf("Invalid mode: %s. Use 'stdio' or 'http'", mode)
 	}
+}
+
+// startUpdateCheck starts looking for a newer release, unless the user turned
+// that off with BGG_DISABLE_UPDATE_CHECK. Only stdio mode checks: the users of
+// an HTTP deployment can't update it themselves.
+func startUpdateCheck() *update.Checker {
+	if disabled, _ := strconv.ParseBool(os.Getenv("BGG_DISABLE_UPDATE_CHECK")); disabled {
+		return nil
+	}
+	updates := update.NewChecker(serverVersion)
+	updates.Start(context.Background())
+	return updates
 }
 
 func runStdioServer(mcpServer *server.MCPServer) {
@@ -206,7 +238,7 @@ func runHTTPServer(port string) {
 			username = os.Getenv("BGG_USERNAME")
 		}
 
-		sessionMCPServer := createMCPServer(sessionClient, username)
+		sessionMCPServer := createMCPServer(sessionClient, username, nil)
 
 		httpServer := server.NewStreamableHTTPServer(sessionMCPServer,
 			server.WithEndpointPath("/mcp"),

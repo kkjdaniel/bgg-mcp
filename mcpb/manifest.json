@@ -43,11 +43,11 @@
     },
     {
       "name": "bgg-details",
-      "description": "Get details for one or more games: description, mechanics, player count, playtime, complexity and ratings"
+      "description": "Get details for one or more games: description, mechanics, best player counts, playtime, complexity, ratings and rank, with optional marketplace listings, editions and user comments"
     },
     {
       "name": "bgg-collection",
-      "description": "Query a user's collection with filters for owned, wishlist, rated, played and more"
+      "description": "Query a user's collection, with their ratings, BGG ratings and plays, filtered by owned, wishlist, rated, played and more"
     },
     {
       "name": "bgg-hot",
