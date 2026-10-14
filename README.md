@@ -146,7 +146,11 @@ Here are some example prompts you can use to interact with the BGG MCP tools:
 
 > **Authentication Required**: Most BGG MCP tools require authentication to access BoardGameGeek's API. See the [Configuration section](#configuration) below for setup instructions.
 
-### A) Docker (Recommended)
+### A) Claude Desktop Extension (macOS / Windows)
+
+Download `bgg-mcp.mcpb` from the [latest release](https://github.com/kkjdaniel/bgg-mcp/releases/latest) and double-click it. Claude Desktop opens an install dialog where you can enter your BGG API key and username, with no Docker or Go needed.
+
+### B) Docker
 
 BGG MCP is published to [Docker Hub](https://hub.docker.com/r/kdaniel/bgg-mcp) and listed on the [MCP Registry](https://github.com/modelcontextprotocol/registry). Add the following to your `claude_desktop_config.json` (Claude Desktop) or `settings.json` (VS Code / Cursor):
 
@@ -171,7 +175,7 @@ BGG MCP is published to [Docker Hub](https://hub.docker.com/r/kdaniel/bgg-mcp) a
 
 For more details on connecting MCP servers to your client, see the [official MCP guide](https://modelcontextprotocol.io/docs/develop/connect-local-servers).
 
-### B) Manual Setup
+### C) Manual Setup
 
 #### 1. Install Go
 

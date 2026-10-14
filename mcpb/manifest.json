@@ -1,0 +1,113 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/mcpb/main/schemas/mcpb-manifest-v0.3.schema.json",
+  "manifest_version": "0.3",
+  "name": "bgg-mcp",
+  "display_name": "BGG MCP",
+  "version": "1.7.0",
+  "description": "BoardGameGeek for your AI assistant: game details, collections, prices, recommendations and rules answers.",
+  "long_description": "BGG MCP connects Claude to [BoardGameGeek](https://boardgamegeek.com). Search for games, look up details, browse your collection, check the hotness list, compare prices across retailers, find similar games, spot trades with other users and answer rules questions from the BGG forums.\n\nMost tools need BoardGameGeek authentication, so add an API key (or a cookie) when you install. Set your BGG username to say \"my collection\" instead of typing it each time.\n\nPrices come from [BoardGamePrices.co.uk](https://boardgameprices.co.uk) and recommendations from [Recommend.Games](https://recommend.games).",
+  "author": {
+    "name": "Karl Daniel",
+    "url": "https://github.com/kkjdaniel"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kkjdaniel/bgg-mcp"
+  },
+  "homepage": "https://github.com/kkjdaniel/bgg-mcp",
+  "documentation": "https://github.com/kkjdaniel/bgg-mcp#readme",
+  "support": "https://github.com/kkjdaniel/bgg-mcp/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "binary",
+    "entry_point": "server/bgg-mcp",
+    "mcp_config": {
+      "command": "${__dirname}/server/bgg-mcp",
+      "args": [],
+      "env": {
+        "BGG_API_KEY": "${user_config.bgg_api_key}",
+        "BGG_COOKIE": "${user_config.bgg_cookie}",
+        "BGG_USERNAME": "${user_config.bgg_username}"
+      },
+      "platform_overrides": {
+        "win32": {
+          "command": "${__dirname}/server/bgg-mcp.exe"
+        }
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "bgg-search",
+      "description": "Search for board games by name"
+    },
+    {
+      "name": "bgg-details",
+      "description": "Get details for one or more games: description, mechanics, player count, playtime, complexity and ratings"
+    },
+    {
+      "name": "bgg-collection",
+      "description": "Query a user's collection with filters for owned, wishlist, rated, played and more"
+    },
+    {
+      "name": "bgg-hot",
+      "description": "Get the current BoardGameGeek hotness list"
+    },
+    {
+      "name": "bgg-user",
+      "description": "Get a BoardGameGeek user's profile"
+    },
+    {
+      "name": "bgg-price",
+      "description": "Get current prices for games from multiple retailers"
+    },
+    {
+      "name": "bgg-trade-finder",
+      "description": "Find games one user owns that another user has on their wishlist"
+    },
+    {
+      "name": "bgg-recommender",
+      "description": "Get recommendations for games similar to a given game"
+    },
+    {
+      "name": "bgg-rules",
+      "description": "Answer rules questions from a game's BoardGameGeek rules forum"
+    },
+    {
+      "name": "bgg-thread-details",
+      "description": "Read a BoardGameGeek forum thread as plain text"
+    }
+  ],
+  "prompts_generated": true,
+  "keywords": ["boardgamegeek", "bgg", "board games", "tabletop", "collection", "rules"],
+  "license": "MIT",
+  "privacy_policies": ["https://boardgamegeek.com/privacy"],
+  "compatibility": {
+    "platforms": ["darwin", "win32"]
+  },
+  "user_config": {
+    "bgg_api_key": {
+      "type": "string",
+      "title": "BGG API Key",
+      "description": "Recommended, as most tools need BoardGameGeek authentication. Request a key at https://boardgamegeek.com/applications",
+      "sensitive": true,
+      "required": false,
+      "default": ""
+    },
+    "bgg_username": {
+      "type": "string",
+      "title": "BGG Username",
+      "description": "Your BoardGameGeek username, used when you say \"me\" or \"my\" (for example \"show my collection\")",
+      "required": false,
+      "default": ""
+    },
+    "bgg_cookie": {
+      "type": "string",
+      "title": "BGG Cookie",
+      "description": "Alternative to an API key, ignored when a key is set. Format: bggusername=user; bggpassword=pass; SessionID=xyz",
+      "sensitive": true,
+      "required": false,
+      "default": ""
+    }
+  }
+}

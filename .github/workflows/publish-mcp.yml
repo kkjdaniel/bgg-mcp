@@ -16,7 +16,68 @@ env:
   IMAGE_NAME: kdaniel/bgg-mcp
 
 jobs:
+  bundle:
+    runs-on: macos-latest
+    permissions:
+      contents: write # Required to upload the bundle to the GitHub release
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      sha256: ${{ steps.sha.outputs.sha256 }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+          cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          VERSION="$INPUT_VERSION"
+          if [ -z "$VERSION" ]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Update manifest.json version
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          jq --arg version "$VERSION" '.version = $version' mcpb/manifest.json > mcpb/manifest.json.tmp
+          mv mcpb/manifest.json.tmp mcpb/manifest.json
+
+      - name: Build MCP bundle
+        run: make mcpb
+
+      - name: Compute bundle SHA-256
+        id: sha
+        run: echo "sha256=$(shasum -a 256 build/bgg-mcp.mcpb | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload bundle to GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: v${{ steps.version.outputs.version }}
+        run: |
+          if ! gh release view "$TAG" > /dev/null 2>&1; then
+            gh release create "$TAG" --title "$TAG" --notes "" --target "$GITHUB_SHA"
+          fi
+          gh release upload "$TAG" build/bgg-mcp.mcpb --clobber
+          echo "✓ Uploaded bgg-mcp.mcpb to release $TAG"
+
   publish:
+    needs: bundle
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -72,13 +133,21 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Update server.json version
+      - name: Update server.json version and packages
+        env:
+          VERSION: ${{ needs.bundle.outputs.version }}
+          MCPB_SHA256: ${{ needs.bundle.outputs.sha256 }}
         run: |
-          VERSION="${{ github.event.inputs.version }}"
-          if [ -z "$VERSION" ]; then
-            VERSION="${GITHUB_REF#refs/tags/v}"
-          fi
-          jq --arg version "$VERSION" '.version = $version | .packages[0].identifier = "docker.io/kdaniel/bgg-mcp:" + $version' server.json > server.json.tmp
+          jq --arg version "$VERSION" --arg sha "$MCPB_SHA256" '
+            .version = $version
+            | .packages[0].identifier = "docker.io/kdaniel/bgg-mcp:" + $version
+            | .packages += [{
+                registryType: "mcpb",
+                identifier: ("https://github.com/kkjdaniel/bgg-mcp/releases/download/v" + $version + "/bgg-mcp.mcpb"),
+                fileSha256: $sha,
+                transport: { type: "stdio" }
+              }]
+          ' server.json > server.json.tmp
           mv server.json.tmp server.json
           echo "Updated server.json to version $VERSION"
 
@@ -95,10 +164,12 @@ jobs:
         run: ./mcp-publisher login github-oidc
 
       - name: Publish to MCP Registry
+        env:
+          TAG: v${{ needs.bundle.outputs.version }}
         run: |
           ./mcp-publisher publish
           echo "✓ Successfully published to MCP Registry"
           echo "✓ Docker image published to: docker.io/kdaniel/bgg-mcp:${{ steps.meta.outputs.version }}"
           echo ""
-          echo "Create a GitHub release manually with your release notes at:"
-          echo "https://github.com/kkjdaniel/bgg-mcp/releases/new?tag=${{ github.ref_name }}"
+          echo "Add your release notes to the GitHub release at:"
+          echo "https://github.com/kkjdaniel/bgg-mcp/releases/edit/$TAG"
