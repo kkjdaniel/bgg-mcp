@@ -7,11 +7,11 @@
     "url": "https://github.com/kkjdaniel/bgg-mcp",
     "source": "github"
   },
-  "version": "1.9.1",
+  "version": "1.9.2",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "docker.io/kdaniel/bgg-mcp:1.9.1",
+      "identifier": "docker.io/kdaniel/bgg-mcp:1.9.2",
       "transport": {
         "type": "stdio"
       },
