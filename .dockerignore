@@ -1,0 +1,3 @@
+# Only the Go sources are needed to build the image
+images/
+build/

@@ -21,11 +21,7 @@ Game recommendations are powered by [Recommend.Games](https://recommend.games/),
 ## Demo
 
 <div align="center">
-  
-  [![Rules Tool Demo Video](https://img.youtube.com/vi/cNX4WwVbFko/maxresdefault.jpg)](https://youtu.be/cNX4WwVbFko)
-  
-  **[▶️ Watch the Rules Tool Demo Video](https://youtu.be/cNX4WwVbFko)**
-  
+  <img src="images/demo.gif" alt="Claude listing the games rated 10 in a BGG collection, then which of them play best at 2 players from BGG's player count votes" width="100%">
 </div>
 
 ## Tools
