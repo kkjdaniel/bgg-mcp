@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/kkjdaniel/bgg-mcp/tools"
 	"github.com/kkjdaniel/gogeek/v3"
 	"github.com/kkjdaniel/gogeek/v3/collection"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -17,11 +18,7 @@ func ownedCollectionContents(ctx context.Context, client *gogeek.Client, uri str
 		return nil, fmt.Errorf("error fetching collection: %v", err)
 	}
 
-	if len(result.Items) == 0 {
-		return jsonContents(uri, "[]"), nil
-	}
-
-	out, err := json.Marshal(result.Items)
+	out, err := json.Marshal(tools.NewCollectionResult(username, result.Items))
 	if err != nil {
 		return nil, fmt.Errorf("error formatting results: %v", err)
 	}

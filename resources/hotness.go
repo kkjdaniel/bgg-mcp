@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/kkjdaniel/bgg-mcp/tools"
 	"github.com/kkjdaniel/gogeek/v3"
-	"github.com/kkjdaniel/gogeek/v3/hot"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -20,33 +20,17 @@ func HotnessResource(client *gogeek.Client) (mcp.Resource, server.ResourceHandle
 	)
 
 	handler := func(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
-		hotItems, err := hot.Query(ctx, client, hot.ItemTypeBoardGame)
+		hotGames, err := tools.FetchHotGames(ctx, client)
 		if err != nil {
 			return nil, fmt.Errorf("error fetching hotness list: %v", err)
 		}
 
-		if len(hotItems.Items) == 0 {
-			return []mcp.ResourceContents{
-				&mcp.TextResourceContents{
-					URI:      "bgg://hotness",
-					MIMEType: "application/json",
-					Text:     "[]",
-				},
-			}, nil
-		}
-
-		out, err := json.Marshal(hotItems.Items)
+		out, err := json.Marshal(hotGames)
 		if err != nil {
 			return nil, fmt.Errorf("error formatting results: %v", err)
 		}
 
-		return []mcp.ResourceContents{
-			&mcp.TextResourceContents{
-				URI:      "bgg://hotness",
-				MIMEType: "application/json",
-				Text:     string(out),
-			},
-		}, nil
+		return jsonContents("bgg://hotness", string(out)), nil
 	}
 
 	return resource, handler

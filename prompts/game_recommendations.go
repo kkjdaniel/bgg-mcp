@@ -54,11 +54,11 @@ func RegisterGameRecommendationsPrompt(s *server.MCPServer, defaultUsername stri
 
 ## 🎲 Your Game Recommendations
 
-Based on your love of [list 2-3 of their favourite games], here are my recommendations:
+Based on your love of [list 2-3 of their favourite games, each linked to its BGG page], here are my recommendations:
 
-### 1. **Brass: Birmingham** (2018)
+### 1. **[Brass: Birmingham](https://boardgamegeek.com/boardgame/224517)** (2018)
 *Perfect for fans of economic strategy - build industries and rail networks in Industrial Revolution England*
-- **Recommended because**: you rated [favourite game] highly
+- **Recommended because**: you rated [favourite game, linked to its BGG page] highly
 - **Mechanisms**: Network building, Hand management, Economic
 - **Complexity**: 3.9/5
 - **Best Price**: [$67.99](link)
@@ -67,6 +67,7 @@ Based on your love of [list 2-3 of their favourite games], here are my recommend
 
 **Guidelines:**
 - Keep descriptions compelling and focused on why THEY would enjoy it
+- Link every game name to its BoardGameGeek page, using the 'link' from the tool results
 - Take mechanisms and complexity from the bgg-details results, not from memory
 - Show "Price not found" when bgg-price has no price for a game
 - Never recommend a game from their owned list`, username, username, username, currency, destination)),

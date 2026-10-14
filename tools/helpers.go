@@ -15,6 +15,7 @@ const selfUsernameMissingMessage = "BGG_USERNAME is not set. Either set it or pr
 type EssentialGameInfo struct {
 	ID           int         `json:"id"`
 	Name         string      `json:"name"`
+	Link         string      `json:"link"`
 	Description  string      `json:"description"`
 	Year         int         `json:"year"`
 	Complexity   float64     `json:"complexity"`
@@ -23,13 +24,13 @@ type EssentialGameInfo struct {
 	BayesAverage float64     `json:"bayes_average"`
 	PlayTime     string      `json:"play_time"`
 	MinAge       int         `json:"min_age"`
-	Designer     string      `json:"designer"`
-	Publisher    string      `json:"publisher"`
+	Designers    []BGGLink   `json:"designers"`
+	Publishers   []BGGLink   `json:"publishers"`
 	Type         string      `json:"type"`
 	Thumbnail    string      `json:"thumbnail"`
 	Image        string      `json:"image"`
-	Categories   []string    `json:"categories"`
-	Mechanics    []string    `json:"mechanics"`
+	Categories   []BGGLink   `json:"categories"`
+	Mechanics    []BGGLink   `json:"mechanics"`
 	NumRatings   int         `json:"num_ratings"`
 	Owned        int         `json:"owned"`
 	Wishing      int         `json:"wishing"`
@@ -63,6 +64,7 @@ func extractEssentialInfo(item thing.Item) EssentialGameInfo {
 	info := EssentialGameInfo{
 		ID:          item.ID,
 		Name:        item.Name[0].Value,
+		Link:        itemURL(item.Type, item.ID),
 		Year:        item.YearPublished.Value,
 		Description: item.Description,
 		Type:        item.Type,
@@ -107,32 +109,19 @@ func extractEssentialInfo(item thing.Item) EssentialGameInfo {
 		}
 	}
 
-	var designers []string
-	var publishers []string
-	var categories []string
-	var mechanics []string
-
 	for _, link := range item.Links {
+		named := BGGLink{Name: link.Value, Link: itemURL(link.Type, link.ID)}
 		switch link.Type {
 		case "boardgamedesigner":
-			designers = append(designers, link.Value)
+			info.Designers = append(info.Designers, named)
 		case "boardgamepublisher":
-			publishers = append(publishers, link.Value)
+			info.Publishers = append(info.Publishers, named)
 		case "boardgamecategory":
-			categories = append(categories, link.Value)
+			info.Categories = append(info.Categories, named)
 		case "boardgamemechanic":
-			mechanics = append(mechanics, link.Value)
+			info.Mechanics = append(info.Mechanics, named)
 		}
 	}
-
-	if len(designers) > 0 {
-		info.Designer = strings.Join(designers, ", ")
-	}
-	if len(publishers) > 0 {
-		info.Publisher = strings.Join(publishers, ", ")
-	}
-	info.Categories = categories
-	info.Mechanics = mechanics
 
 	return info
 }

@@ -43,6 +43,9 @@ Game recommendations are powered by [Recommend.Games](https://recommend.games/),
 | `bgg-rules`          | Answer rules questions by finding the most relevant threads in a game's BGG rules forum |
 | `bgg-thread-details` | Get the full content of a specific BGG forum thread including all posts                 |
 
+> [!NOTE]
+> Results link back to their pages on boardgamegeek.com, and the assistant is asked to include those links in its answers.
+
 ## Resources
 
 BGG MCP exposes resources that AI assistants can access directly for contextual information:

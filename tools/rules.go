@@ -42,6 +42,7 @@ type RulesThread struct {
 type RulesResult struct {
 	GameName         string        `json:"game_name,omitempty"`
 	GameID           int           `json:"game_id"`
+	GameLink         string        `json:"game_link"`
 	ForumTitle       string        `json:"forum_title"`
 	TotalThreads     int           `json:"total_threads"`
 	ThreadsSearched  int           `json:"threads_searched"`
@@ -166,7 +167,7 @@ func toRulesThread(t forum.Thread) RulesThread {
 		Subject:  t.Subject,
 		Replies:  max(t.NumArticles-1, 0),
 		LastPost: t.LastPostDate,
-		Link:     fmt.Sprintf("https://boardgamegeek.com/thread/%d", t.ID),
+		Link:     threadURL(t.ID),
 	}
 }
 
@@ -214,6 +215,7 @@ func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 
 		var gameID int
 		var gameName string
+		var gameType string
 		var err error
 
 		if idVal, ok := arguments["id"]; ok && idVal != nil {
@@ -233,6 +235,7 @@ func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			}
 			gameID = bestMatch.ID
 			gameName = bestMatch.Name.Value
+			gameType = bestMatch.Type
 		} else {
 			return mcp.NewToolResultText("Either 'name' or 'id' parameter is required"), nil
 		}
@@ -258,6 +261,7 @@ func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		result := RulesResult{
 			GameName:   gameName,
 			GameID:     gameID,
+			GameLink:   itemURL(gameType, gameID),
 			ForumTitle: rulesForum.Title,
 			Question:   question,
 		}

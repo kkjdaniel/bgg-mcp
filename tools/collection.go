@@ -11,6 +11,38 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
+// CollectionResult is the matching games in a user's collection, with links to
+// the user's BGG profile, their collection and each game.
+type CollectionResult struct {
+	Username       string           `json:"username"`
+	UserLink       string           `json:"user_link"`
+	CollectionLink string           `json:"collection_link"`
+	Items          []CollectionGame `json:"items"`
+}
+
+// CollectionGame is a collection item with the link to the game's BGG page.
+type CollectionGame struct {
+	collection.CollectionItem
+	Link string `json:"link"`
+}
+
+func NewCollectionResult(username string, items []collection.CollectionItem) CollectionResult {
+	games := make([]CollectionGame, 0, len(items))
+	for _, item := range items {
+		games = append(games, CollectionGame{
+			CollectionItem: item,
+			Link:           itemURL(item.Subtype, item.ObjectID),
+		})
+	}
+
+	return CollectionResult{
+		Username:       username,
+		UserLink:       profileURL(username),
+		CollectionLink: collectionURL(username),
+		Items:          games,
+	}
+}
+
 func CollectionTool(client *gogeek.Client, selfUsername string) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-collection",
 		mcp.WithDescription("Query a user's board game collection on BoardGameGeek (BGG). Returns all matching games by default with basic info (name, ID, rating, plays, status). Use the filter parameters to narrow results (e.g. owned, wishlist, rated, play count). For detailed information about specific games (description, mechanics, player count, complexity, etc.), follow up with bgg-details using the game IDs from the results."),
@@ -92,10 +124,10 @@ func CollectionTool(client *gogeek.Client, selfUsername string) (mcp.Tool, serve
 		}
 
 		if len(result.Items) == 0 {
-			return mcp.NewToolResultText("No items found in collection with the specified filters"), nil
+			return mcp.NewToolResultText(fmt.Sprintf("No items found in collection with the specified filters. Collection on BGG: %s", collectionURL(username))), nil
 		}
 
-		out, err := json.Marshal(result.Items)
+		out, err := json.Marshal(NewCollectionResult(username, result.Items))
 		if err != nil {
 			return mcp.NewToolResultText(fmt.Sprintf("Error formatting results: %v", err)), nil
 		}

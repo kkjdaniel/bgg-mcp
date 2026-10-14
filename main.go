@@ -52,10 +52,19 @@ func createClientFromSessionConfig(apiKey, cookie string) *gogeek.Client {
 	return gogeek.NewClient(gogeek.Auth{})
 }
 
+// serverInstructions asks the model to show users the boardgamegeek.com links
+// that come with BGG data, which BoardGameGeek asks of answers that use it.
+const serverInstructions = `BoardGameGeek (BGG) asks that answers using its data link back to boardgamegeek.com, so always show the user the links that come with this server's results:
+
+- Games, designers, publishers, categories, mechanics, users, guilds and forum threads in the results carry a "link" (or a field ending in "_link") to their BGG page. When your answer names one of them, put its link on the name as a Markdown link, such as [Brass: Birmingham](https://boardgamegeek.com/boardgame/224517), rather than showing a bare URL.
+- When your answer uses BGG data without naming anything that has a link, such as how many games a collection holds, link the page the data came from (such as the "collection_link" of a collection), or else https://boardgamegeek.com.
+- Use the links exactly as the results give them rather than writing BGG URLs from memory.`
+
 func createMCPServer(client *gogeek.Client, username string) *server.MCPServer {
 	s := server.NewMCPServer(
 		"BGG MCP",
 		"1.7.0",
+		server.WithInstructions(serverInstructions),
 		server.WithResourceCapabilities(false, false),
 		server.WithPromptCapabilities(true),
 		server.WithLogging(),

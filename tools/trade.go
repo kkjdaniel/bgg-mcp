@@ -13,7 +13,9 @@ import (
 
 type TradeOpportunity struct {
 	User1Username    string          `json:"user1_username"`
+	User1Link        string          `json:"user1_link"`
 	User2Username    string          `json:"user2_username"`
+	User2Link        string          `json:"user2_link"`
 	User1HasWanted   []TradeItem     `json:"user1_has_wanted"`
 	User2Wishlist    []TradeItem     `json:"user2_wishlist"`
 	Summary          TradeSummary    `json:"summary"`
@@ -22,6 +24,7 @@ type TradeOpportunity struct {
 type TradeItem struct {
 	GameID       int     `json:"game_id"`
 	Name         string  `json:"name"`
+	Link         string  `json:"link"`
 	YearPublished int    `json:"year_published"`
 	ForTrade     bool    `json:"for_trade"`
 	WantInTrade  bool    `json:"want_in_trade"`
@@ -118,6 +121,7 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 			user1HasWanted = append(user1HasWanted, TradeItem{
 				GameID:       user1Item.ObjectID,
 				Name:         user1Item.Name,
+				Link:         itemURL(user1Item.Subtype, user1Item.ObjectID),
 				YearPublished: user1Item.YearPublished,
 				ForTrade:     user1Item.Status.ForTrade == 1,
 				WantInTrade:  user1Item.Status.Want == 1,
@@ -129,6 +133,7 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 		user2Wishlist = append(user2Wishlist, TradeItem{
 			GameID:       wishlistItem.ObjectID,
 			Name:         wishlistItem.Name,
+			Link:         itemURL(wishlistItem.Subtype, wishlistItem.ObjectID),
 			YearPublished: wishlistItem.YearPublished,
 			ForTrade:     wishlistItem.Status.ForTrade == 1,
 			WantInTrade:  true,
@@ -138,7 +143,9 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 	if len(user1HasWanted) == 0 {
 		return TradeOpportunity{
 			User1Username: user1,
+			User1Link: profileURL(user1),
 			User2Username: user2,
+			User2Link: profileURL(user2),
 			User1HasWanted: []TradeItem{},
 			User2Wishlist: user2Wishlist,
 			Summary: TradeSummary{
@@ -157,7 +164,9 @@ func analyseTradeOpportunities(user1, user2 string, user1Col, user2WishlistCol *
 
 	return TradeOpportunity{
 		User1Username: user1,
+		User1Link: profileURL(user1),
 		User2Username: user2,
+		User2Link: profileURL(user2),
 		User1HasWanted: user1HasWanted,
 		User2Wishlist: user2Wishlist,
 		Summary:        summary,

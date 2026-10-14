@@ -59,7 +59,7 @@ func RegisterTradeSalesPrompt(s *server.MCPServer, defaultUsername string) {
 5. Bundle expansions with their base game. When an expansion and the game it expands are both for trade, list them as one bundle with a single asking price based on the combined retail prices, and name the expansions included. List an expansion on its own only when its base game is not for trade, and mark it as an expansion that needs the base game.
 6. Create a sales post with:
    - A header saying "🎲 BOARD GAMES FOR SALE 🎲"
-   - Each game or bundle with its name and asking price, where the asking price is the retail price (combined, for a bundle) reduced by %s%% and rounded to a sensible whole number
+   - Each game or bundle with its name, linked to the game's BoardGameGeek page (the 'link' from the collection results) in whatever way the platform supports, and its asking price, where the asking price is the retail price (combined, for a bundle) reduced by %s%% and rounded to a sensible whole number
    - Emoji status indicators: 🟢 = Available, 🟡 = Pending, 🔴 = Sold (default all to 🟢)
    - "Price TBD" for any game with no usable retail price
    - A closing line saying "DM for more info or bundle deals!"
