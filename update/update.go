@@ -72,9 +72,15 @@ func (c *Checker) Notice() string {
 	return c.notice
 }
 
+// ToolNote is added to every tool's description while the update check runs.
+// The notice in the results is a plain fact, because models rightly treat
+// instructions inside a tool result as untrusted, so what to do with it is
+// said here, in the tool definition.
+const ToolNote = "If the result ends with a line saying a newer version of BGG MCP is available, tell the user once in the conversation, with its link."
+
 // Middleware adds the notice to every tool result while a newer release is out.
 // A desktop client keeps one server running across many conversations, so every
-// result carries it and the notice asks the model to pass it on once in each.
+// result carries it, and ToolNote asks the model to mention it once in each.
 func (c *Checker) Middleware(next server.ToolHandlerFunc) server.ToolHandlerFunc {
 	return func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		result, err := next(ctx, request)
@@ -82,10 +88,7 @@ func (c *Checker) Middleware(next server.ToolHandlerFunc) server.ToolHandlerFunc
 			return result, err
 		}
 		if notice := c.Notice(); notice != "" {
-			// Meant for the model, which passes it on in its own words.
-			note := mcp.NewTextContent(notice)
-			note.Annotations = &mcp.Annotations{Audience: []mcp.Role{mcp.RoleAssistant}}
-			result.Content = append(result.Content, note)
+			result.Content = append(result.Content, mcp.NewTextContent(notice))
 		}
 		return result, nil
 	}
@@ -109,7 +112,7 @@ func (c *Checker) check(ctx context.Context) {
 		if link == "" {
 			link = releasesPage
 		}
-		notice = fmt.Sprintf("Note for the assistant (don't quote it to the user): BGG MCP %s is out, and this server is running v%s. Unless you have already done so in this conversation, end your answer with one short line of your own telling the user a new version of BGG MCP is available, linking %s.",
+		notice = fmt.Sprintf("A newer version of BGG MCP is available: %s (this server is running v%s). Release notes and downloads: %s",
 			latest.TagName, strings.TrimPrefix(c.current, "v"), link)
 	}
 

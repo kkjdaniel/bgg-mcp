@@ -5,9 +5,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kkjdaniel/gogeek/v3"
 	"github.com/kkjdaniel/gogeek/v3/collection"
 	"github.com/kkjdaniel/gogeek/v3/thing"
 	"github.com/kkjdaniel/gogeek/v3/user"
+	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/mark3labs/mcp-go/server"
 )
 
 func TestExtractEssentialInfoLinks(t *testing.T) {
@@ -139,4 +142,36 @@ func TestNewUserProfileLinks(t *testing.T) {
 	if len(profile.TopGames) != 1 || profile.TopGames[0].Link != "https://boardgamegeek.com/boardgame/224517" {
 		t.Errorf("top games = %+v, want Brass: Birmingham linked to its boardgame page", profile.TopGames)
 	}
+}
+
+func TestToolDescriptionsAskForLinks(t *testing.T) {
+	client := gogeek.NewClient(gogeek.Auth{})
+	withLinks := map[string]mcp.Tool{}
+	for _, tool := range []mcp.Tool{
+		first(DetailsTool(client)),
+		first(CollectionTool(client, "")),
+		first(HotnessTool(client)),
+		first(UserTool(client, "")),
+		first(SearchTool(client)),
+		first(TradeFinderTool(client, "")),
+		first(RecommenderTool(client)),
+		first(RulesTool(client)),
+		first(ThreadDetailsTool(client)),
+	} {
+		withLinks[tool.Name] = tool
+	}
+	for name, tool := range withLinks {
+		if !strings.HasSuffix(tool.Description, linkNote) {
+			t.Errorf("%s returns BGG data, so its description should end with the link note", name)
+		}
+	}
+
+	// Prices come from BoardGamePrices.co.uk, which has no BGG pages to link.
+	if price := first(PriceTool()); strings.Contains(price.Description, linkNote) {
+		t.Errorf("bgg-price returns no BGG links, so it shouldn't ask for them")
+	}
+}
+
+func first(tool mcp.Tool, _ server.ToolHandlerFunc) mcp.Tool {
+	return tool
 }

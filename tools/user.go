@@ -96,7 +96,7 @@ func newUserProfile(u *user.User) UserProfile {
 
 func UserTool(client *gogeek.Client, selfUsername string) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-user",
-		mcp.WithDescription("Find details about a specific user on BoardGameGeek (BGG)"),
+		mcp.WithDescription(withLinkNote("Find details about a specific user on BoardGameGeek (BGG)")),
 		mcp.WithString("username",
 			mcp.Required(),
 			mcp.Description("The username of the BoardGameGeek (BGG) user. When the user refers to themselves (me, my, I), use 'SELF' as the value."),

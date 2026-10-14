@@ -96,7 +96,4 @@ func TestMiddleware(t *testing.T) {
 	if notice.Text != "Update available" {
 		t.Errorf("notice = %q", notice.Text)
 	}
-	if notice.Annotations == nil || len(notice.Annotations.Audience) != 1 || notice.Annotations.Audience[0] != mcp.RoleAssistant {
-		t.Errorf("the notice should be marked for the assistant only, got %+v", notice.Annotations)
-	}
 }

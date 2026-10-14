@@ -195,7 +195,7 @@ func findRulesForum(forums []forumlist.Forum) *forumlist.Forum {
 
 func RulesTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-rules",
-		mcp.WithDescription("Use this tool when users ask rules questions about board games (e.g., 'How does X work?', 'Can I do Y?', 'What happens when Z?'). Searches the game's BoardGameGeek rules forum for the threads most relevant to the question and returns them ranked, with the posts of the top matches included."),
+		mcp.WithDescription(withLinkNote("Use this tool when users ask rules questions about board games (e.g., 'How does X work?', 'Can I do Y?', 'What happens when Z?'). Searches the game's BoardGameGeek rules forum for the threads most relevant to the question and returns them ranked, with the posts of the top matches included.")),
 		mcp.WithString("name",
 			mcp.Description("The name of the board game. Use when the BGG ID is not known."),
 		),

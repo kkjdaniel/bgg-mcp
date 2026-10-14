@@ -114,7 +114,7 @@ func collectionStatus(status collection.ItemStatus) []string {
 
 func CollectionTool(client *gogeek.Client, selfUsername string) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-collection",
-		mcp.WithDescription("Query a user's board game collection on BoardGameGeek (BGG). Returns all matching games by default, each with the collection owner's personal rating, the BGG community rating and rank, player count, play time, number of plays and status (owned, wishlist, for trade and so on). Use the filter parameters to narrow results (e.g. owned, wishlist, rated, play count). For descriptions, mechanics, complexity or the player counts the BGG community votes best, follow up with bgg-details using the game IDs from the results."),
+		mcp.WithDescription(withLinkNote("Query a user's board game collection on BoardGameGeek (BGG). Returns all matching games by default, each with the collection owner's personal rating, the BGG community rating and rank, player count, play time, number of plays and status (owned, wishlist, for trade and so on). Use the filter parameters to narrow results (e.g. owned, wishlist, rated, play count). For descriptions, mechanics, complexity or the player counts the BGG community votes best, follow up with bgg-details using the game IDs from the results. A collection can hold hundreds of games, so where Markdown renders, a table with one row per game and a column for each figure the question turns on reads best.")),
 		mcp.WithString("username",
 			mcp.Required(),
 			mcp.Description("The username of the BoardGameGeek (BGG) user who owns the collection. When the user refers to themselves (me, my, I), use 'SELF' as the value."),

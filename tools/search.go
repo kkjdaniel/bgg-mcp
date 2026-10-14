@@ -16,7 +16,7 @@ import (
 
 func SearchTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-search",
-		mcp.WithDescription("Search for board games on BoardGameGeek (BGG) by name or part of a name using a broad search (e.g., 'Catan', 'Ticket to Ride')"),
+		mcp.WithDescription(withLinkNote("Search for board games on BoardGameGeek (BGG) by name or part of a name using a broad search (e.g., 'Catan', 'Ticket to Ride')")),
 		mcp.WithString("query",
 			mcp.Required(),
 			mcp.Description("Game name to search for on BoardGameGeek (BGG)"),

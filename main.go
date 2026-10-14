@@ -17,6 +17,7 @@ import (
 	"github.com/kkjdaniel/bgg-mcp/tools"
 	"github.com/kkjdaniel/bgg-mcp/update"
 	"github.com/kkjdaniel/gogeek/v3"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
@@ -85,42 +86,50 @@ func createMCPServer(client *gogeek.Client, username string, updates *update.Che
 		server.WithPromptCapabilities(true),
 		server.WithLogging(),
 		server.WithRecovery(),
-		server.WithToolHandlerMiddleware(tools.AnswerGuideMiddleware),
 	}
 	if updates != nil {
 		options = append(options, server.WithToolHandlerMiddleware(updates.Middleware))
 	}
 	s := server.NewMCPServer("BGG MCP", serverVersion, options...)
 
+	// While the update check runs, any tool result can end with a line saying a
+	// newer release is out, and each tool's description says what to do with it.
+	addTool := func(tool mcp.Tool, handler server.ToolHandlerFunc) {
+		if updates != nil {
+			tool.Description += " " + update.ToolNote
+		}
+		s.AddTool(tool, handler)
+	}
+
 	detailsTool, detailsHandler := tools.DetailsTool(client)
-	s.AddTool(detailsTool, detailsHandler)
+	addTool(detailsTool, detailsHandler)
 
 	collectionTool, collectionHandler := tools.CollectionTool(client, username)
-	s.AddTool(collectionTool, collectionHandler)
+	addTool(collectionTool, collectionHandler)
 
 	hotnessTool, hotnessHandler := tools.HotnessTool(client)
-	s.AddTool(hotnessTool, hotnessHandler)
+	addTool(hotnessTool, hotnessHandler)
 
 	userTool, userHandler := tools.UserTool(client, username)
-	s.AddTool(userTool, userHandler)
+	addTool(userTool, userHandler)
 
 	searchTool, searchHandler := tools.SearchTool(client)
-	s.AddTool(searchTool, searchHandler)
+	addTool(searchTool, searchHandler)
 
 	priceTool, priceHandler := tools.PriceTool()
-	s.AddTool(priceTool, priceHandler)
+	addTool(priceTool, priceHandler)
 
 	tradeFinderTool, tradeFinderHandler := tools.TradeFinderTool(client, username)
-	s.AddTool(tradeFinderTool, tradeFinderHandler)
+	addTool(tradeFinderTool, tradeFinderHandler)
 
 	recommenderTool, recommenderHandler := tools.RecommenderTool(client)
-	s.AddTool(recommenderTool, recommenderHandler)
+	addTool(recommenderTool, recommenderHandler)
 
 	rulesTool, rulesHandler := tools.RulesTool(client)
-	s.AddTool(rulesTool, rulesHandler)
+	addTool(rulesTool, rulesHandler)
 
 	threadDetailsTool, threadDetailsHandler := tools.ThreadDetailsTool(client)
-	s.AddTool(threadDetailsTool, threadDetailsHandler)
+	addTool(threadDetailsTool, threadDetailsHandler)
 
 	hotnessResource, hotnessResourceHandler := resources.HotnessResource(client)
 	s.AddResource(hotnessResource, hotnessResourceHandler)

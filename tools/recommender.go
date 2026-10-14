@@ -23,7 +23,7 @@ type RecommendGameItem struct {
 
 func RecommenderTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-recommender",
-		mcp.WithDescription("Get game recommendations similar to a specific board game. Provide either 'name' or 'id', not both."),
+		mcp.WithDescription(withLinkNote("Get game recommendations similar to a specific board game. Provide either 'name' or 'id', not both.")),
 		mcp.WithString("name",
 			mcp.Description("Name of the game to base recommendations on. Use when the BGG ID is not known."),
 		),

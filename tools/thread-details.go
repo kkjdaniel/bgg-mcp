@@ -13,7 +13,7 @@ import (
 
 func ThreadDetailsTool(client *gogeek.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-thread-details",
-		mcp.WithDescription("Get the full content of a specific BoardGameGeek forum thread, with every post as plain text. Use this to read a thread found with bgg-rules."),
+		mcp.WithDescription(withLinkNote("Get the full content of a specific BoardGameGeek forum thread, with every post as plain text. Use this to read a thread found with bgg-rules.")),
 		mcp.WithNumber("thread_id",
 			mcp.Required(),
 			mcp.Description("The BoardGameGeek thread ID to fetch"),

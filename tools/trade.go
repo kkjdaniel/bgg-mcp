@@ -47,7 +47,7 @@ type TradeSummary struct {
 
 func TradeFinderTool(client *gogeek.Client, selfUsername string) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("bgg-trade-finder",
-		mcp.WithDescription("Find what games user1 owns that user2 has on their wishlist. Shows potential trading opportunities, with each game's BGG rating and the owner's own rating ('user_rating': user1's for games they own, user2's for their wishlist)."),
+		mcp.WithDescription(withLinkNote("Find what games user1 owns that user2 has on their wishlist. Shows potential trading opportunities, with each game's BGG rating and the owner's own rating ('user_rating': user1's for games they own, user2's for their wishlist).")),
 		mcp.WithString("user1",
 			mcp.Required(),
 			mcp.Description("BGG username whose collection will be checked. When the user refers to themselves (me, my, I), use 'SELF' as the value."),
