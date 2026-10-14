@@ -92,7 +92,11 @@ func TestMiddleware(t *testing.T) {
 	if text := result.Content[0].(mcp.TextContent).Text; text != `{"name":"Catan"}` {
 		t.Errorf("the result itself should be unchanged, got %q", text)
 	}
-	if text := result.Content[1].(mcp.TextContent).Text; text != "Update available" {
-		t.Errorf("notice = %q", text)
+	notice := result.Content[1].(mcp.TextContent)
+	if notice.Text != "Update available" {
+		t.Errorf("notice = %q", notice.Text)
+	}
+	if notice.Annotations == nil || len(notice.Annotations.Audience) != 1 || notice.Annotations.Audience[0] != mcp.RoleAssistant {
+		t.Errorf("the notice should be marked for the assistant only, got %+v", notice.Annotations)
 	}
 }

@@ -68,6 +68,7 @@ Based on your love of [list 2-3 of their favourite games, each linked to its BGG
 **Guidelines:**
 - Keep descriptions compelling and focused on why THEY would enjoy it
 - Link every game name to its BoardGameGeek page, using the 'link' from the tool results
+- If your interface shows plain text rather than Markdown, keep this structure without the Markdown syntax, and put each URL after the game's name
 - Take mechanisms and complexity from the bgg-details results, not from memory
 - Show "Price not found" when bgg-price has no price for a game
 - Never recommend a game from their owned list`, username, username, username, currency, destination)),

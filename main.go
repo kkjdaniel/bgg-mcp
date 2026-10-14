@@ -63,11 +63,11 @@ const serverVersion = "1.9.0"
 // to lay answers out so that long lists of games stay easy to read.
 const serverInstructions = `BoardGameGeek (BGG) asks that answers using its data link back to boardgamegeek.com, so always show the user the links that come with this server's results:
 
-- Games, designers, publishers, categories, mechanics, users, guilds and forum threads in the results carry a "link" (or a field ending in "_link") to their BGG page. When your answer names one of them, put its link on the name as a Markdown link, such as [Brass: Birmingham](https://boardgamegeek.com/boardgame/224517), rather than showing a bare URL.
+- Games, designers, publishers, categories, mechanics, users, guilds and forum threads in the results carry a "link" (or a field ending in "_link") to their BGG page. When your answer names one of them, give its link. Where your interface renders Markdown, put the link on the name, such as [Brass: Birmingham](https://boardgamegeek.com/boardgame/224517); where it shows plain text, put the URL after the name.
 - When your answer uses BGG data without naming anything that has a link, such as how many games a collection holds, link the page the data came from (such as the "collection_link" of a collection), or else https://boardgamegeek.com.
 - Use the links exactly as the results give them rather than writing BGG URLs from memory.
 
-Lay answers out to be scanned rather than read as prose:
+Lay answers out to be scanned rather than read as prose. The tables below assume your interface renders Markdown; where it shows plain text, use one game per line with its figures instead:
 
 - Start with a one-line answer, such as how many games matched, then give the detail.
 - Never run more than a few games together in a sentence or a comma-separated paragraph.
@@ -85,6 +85,7 @@ func createMCPServer(client *gogeek.Client, username string, updates *update.Che
 		server.WithPromptCapabilities(true),
 		server.WithLogging(),
 		server.WithRecovery(),
+		server.WithToolHandlerMiddleware(tools.AnswerGuideMiddleware),
 	}
 	if updates != nil {
 		options = append(options, server.WithToolHandlerMiddleware(updates.Middleware))
