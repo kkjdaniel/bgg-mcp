@@ -3,7 +3,7 @@
   "manifest_version": "0.3",
   "name": "bgg-mcp",
   "display_name": "BGG MCP",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "BoardGameGeek for your AI assistant: game details, collections, prices, recommendations and rules answers.",
   "long_description": "BGG MCP connects Claude to [BoardGameGeek](https://boardgamegeek.com). Search for games, look up details, browse your collection, check the hotness list, compare prices across retailers, find similar games, spot trades with other users and answer rules questions from the BGG forums.\n\nMost tools need BoardGameGeek authentication, so add an API key (or a cookie) when you install. Set your BGG username to say \"my collection\" instead of typing it each time.\n\nPrices come from [BoardGamePrices.co.uk](https://boardgameprices.co.uk) and recommendations from [Recommend.Games](https://recommend.games).",
   "author": {

@@ -56,7 +56,7 @@ func createClientFromSessionConfig(apiKey, cookie string) *gogeek.Client {
 
 // serverVersion is the version the server reports, and the one the update check
 // compares with the latest GitHub release.
-const serverVersion = "1.9.0"
+const serverVersion = "1.9.1"
 
 // serverInstructions asks the model to show users the boardgamegeek.com links
 // that come with BGG data, which BoardGameGeek asks of answers that use it, and
