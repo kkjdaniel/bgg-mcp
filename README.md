@@ -4,6 +4,7 @@ An MCP server that gives AI assistants access to BoardGameGeek: game details, co
 
 [![Trust score](https://archestra.ai/mcp-catalog/api/badge/quality/kkjdaniel/bgg-mcp)](https://archestra.ai/mcp-catalog/kkjdaniel__bgg-mcp)
 [![MCP Registry](https://img.shields.io/badge/MCP_Registry-BGG_MCP-green)](https://github.com/modelcontextprotocol/registry)
+[![Smithery](https://img.shields.io/badge/Smithery-BGG_MCP-orange)](https://smithery.ai/servers/kkjdaniel/bgg-mcp)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/kkjdaniel/bgg-mcp)](https://go.dev/)
 [![License](https://img.shields.io/github/license/kkjdaniel/bgg-mcp)](LICENSE.md)
 [![MCP Protocol](https://img.shields.io/badge/MCP-Protocol-blue)](https://modelcontextprotocol.io)
@@ -152,7 +153,11 @@ Here are some example prompts you can use to interact with the BGG MCP tools:
 
 Download `bgg-mcp.mcpb` from the [latest release](https://github.com/kkjdaniel/bgg-mcp/releases/latest) and double-click it. Claude Desktop opens an install dialog where you can enter your BGG API key and username, with no Docker or Go needed.
 
-### B) Docker
+### B) Smithery (macOS / Windows)
+
+BGG MCP is also on [Smithery](https://smithery.ai/servers/kkjdaniel/bgg-mcp), which distributes the same bundle, so the server runs locally on your machine. Open the server page, choose your client and follow its install steps, entering your BGG API key and username in the configuration form.
+
+### C) Docker
 
 BGG MCP is published to [Docker Hub](https://hub.docker.com/r/kdaniel/bgg-mcp) and listed on the [MCP Registry](https://github.com/modelcontextprotocol/registry). Add the following to your `claude_desktop_config.json` (Claude Desktop) or `settings.json` (VS Code / Cursor):
 
@@ -177,7 +182,7 @@ BGG MCP is published to [Docker Hub](https://hub.docker.com/r/kdaniel/bgg-mcp) a
 
 For more details on connecting MCP servers to your client, see the [official MCP guide](https://modelcontextprotocol.io/docs/develop/connect-local-servers).
 
-### C) Manual Setup
+### D) Manual Setup
 
 #### 1. Install Go
 
@@ -257,7 +262,7 @@ Alternatively, you can use cookie-based authentication:
 
 You can optionally set your BGG username to enable "me" and "my" references in queries without needing to explicitly state your username.
 
-If you installed the [Claude Desktop Extension](#a-claude-desktop-extension-macos--windows), enter your username in the extension's settings in Claude Desktop (Settings > Extensions > BGG MCP), where you also set your API key. There is no config file to edit.
+If you installed the [Claude Desktop Extension](#a-claude-desktop-extension-macos--windows), enter your username in the extension's settings in Claude Desktop (Settings > Extensions > BGG MCP), where you also set your API key. There is no config file to edit. If you installed through [Smithery](#b-smithery-macos--windows), its configuration form asks for both.
 
 For Docker or a manual setup, set the `BGG_USERNAME` environment variable:
 
