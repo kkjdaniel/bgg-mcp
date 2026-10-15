@@ -1,6 +1,6 @@
 <a href="https://github.com/kkjdaniel/bgg-mcp"><img src="images/readme-banner.png" alt="BGG MCP: BoardGameGeek data for your AI assistant" width="100%"></a>
 
-An MCP server that gives AI assistants access to BoardGameGeek: game details, collections, prices, recommendations and rules answers.
+An MCP server that gives AI assistants access to [BoardGameGeek](https://boardgamegeek.com): game details, collections, prices, recommendations and rules answers.
 
 [![Trust score](https://archestra.ai/mcp-catalog/api/badge/quality/kkjdaniel/bgg-mcp)](https://archestra.ai/mcp-catalog/kkjdaniel__bgg-mcp)
 [![MCP Registry](https://img.shields.io/badge/MCP_Registry-BGG_MCP-green)](https://github.com/modelcontextprotocol/registry)
