@@ -149,7 +149,7 @@ Here are some example prompts you can use to interact with the BGG MCP tools:
 
 > **Authentication Required**: Most BGG MCP tools require authentication to access BoardGameGeek's API. See the [Configuration section](#configuration) below for setup instructions.
 
-### A) Claude Desktop Extension (macOS / Windows)
+### A) Claude Desktop Extension (macOS / Windows) (Recommended)
 
 Download `bgg-mcp.mcpb` from the [latest release](https://github.com/kkjdaniel/bgg-mcp/releases/latest) and double-click it. Claude Desktop opens an install dialog where you can enter your BGG API key and username, with no Docker or Go needed.
 
@@ -262,7 +262,7 @@ Alternatively, you can use cookie-based authentication:
 
 You can optionally set your BGG username to enable "me" and "my" references in queries without needing to explicitly state your username.
 
-If you installed the [Claude Desktop Extension](#a-claude-desktop-extension-macos--windows), enter your username in the extension's settings in Claude Desktop (Settings > Extensions > BGG MCP), where you also set your API key. There is no config file to edit. If you installed through [Smithery](#b-smithery-macos--windows), its configuration form asks for both.
+If you installed the [Claude Desktop Extension](#a-claude-desktop-extension-macos--windows-recommended), enter your username in the extension's settings in Claude Desktop (Settings > Extensions > BGG MCP), where you also set your API key. There is no config file to edit. If you installed through [Smithery](#b-smithery-macos--windows), its configuration form asks for both.
 
 For Docker or a manual setup, set the `BGG_USERNAME` environment variable:
 
